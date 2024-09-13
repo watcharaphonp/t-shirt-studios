@@ -11,8 +11,8 @@ import {
 } from '@remix-run/react'
 import { withEmotionCache } from '@emotion/react'
 import { unstable_useEnhancedEffect as useEnhancedEffect } from '@mui/material'
-import theme from './src/theme'
-import ClientStyleContext from './src/ClientStyleContext'
+import theme from './theme'
+import ClientStyleContext from './ClientStyleContext'
 
 interface DocumentProps {
     children: React.ReactNode
@@ -31,7 +31,7 @@ const Document = withEmotionCache(
             const tags = emotionCache.sheet.tags
             emotionCache.sheet.flush()
             tags.forEach((tag) => {
-                (emotionCache.sheet as any)._insertTag(tag)
+                ;(emotionCache.sheet as any)._insertTag(tag)
             })
             // reset cache to reapply global styles
             clientStyleData.reset()
