@@ -1,0 +1,193 @@
+@font-face {
+    font-family: 'Quicksand';
+    src: url('/fonts/Quicksand-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('/fonts/Quicksand-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('/fonts/Quicksand-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('/fonts/Quicksand-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('/fonts/Quicksand-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@keyframes fade_left {
+    from {
+        left: -200px;
+        opacity: 0;
+    }
+
+    to {
+        left: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes fade_right {
+    from {
+        right: -200px;
+        opacity: 0;
+    }
+
+    to {
+        right: 0;
+        opacity: 1;
+    }
+}
+
+body {
+    background-color: #000;
+    color: #fff !important;
+    font-family: 'Quicksand', sans-serif !important;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    background-color: #000;
+    color: #fff;
+    width: 100vw;
+    height: 220vh;
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+}
+
+.header-bar {
+    font-family: 'Quicksand', sans-serif !important;
+    font-weight: 400;
+    background-color: transparent;
+}
+
+.header-bar-btn,
+.header-bar-btn-sprt {
+    font-family: 'Quicksand', sans-serif !important;
+}
+
+.first-section {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+}
+
+.second-section {
+    position: absolute;
+    margin-top: 100vh;
+    height: 60vh;
+    width: 100vw;
+    background-color: #fff;
+    color: #000;
+}
+
+.third-section {
+    position: absolute;
+    margin-top: 160vh;
+    height: 60vh;
+    width: 100vw;
+    background-color: #3f3939;
+    color: #fff;
+}
+
+.control-dots {
+    z-index: 9999 !important;
+}
+
+.carousel-content {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+
+    & .right-content {
+        padding: 20vh 3vw 15vh 55vw;
+        text-align: right;
+        height: 100%;
+    }
+
+    & .right-content > div.carousel-title {
+        text-align: right;
+        margin-left: auto;
+        max-width: 100%;
+    }
+
+    & .left-content {
+        padding: 20vh 55vw 15vh 3vw;
+        text-align: left;
+        height: 100%;
+    }
+
+    & .left-content > div.carousel-title {
+        text-align: left;
+        margin-right: auto;
+        max-width: 100%;
+    }
+}
+
+.carousel-title {
+    font-size: min(15vh, max(60px, 11vw));
+    animation: fade_left 0.5s ease-in-out;
+    animation-fill-mode: both;
+    position: relative;
+    line-height: 1.2;
+}
+
+.carousel-btn {
+    margin: 24px 0px !important;
+    width: 250px;
+    height: 70px;
+    padding: 12px 0 !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    font-size: 18px !important;
+    font-family: 'Quicksand', sans-serif !important;
+    font-weight: 700;
+    box-shadow: none !important;
+    cursor: pointer;
+    border-radius: 0.5px !important;
+
+    &:hover {
+        background-color: rgb(0, 0, 0);
+        color: #fff;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .carousel-btn {
+        width: 50%;
+    }
+
+    .right-content,
+    .left-content {
+        padding: 24vh 4vw !important;
+    }
+}
+
+.menu-list-item {
+    font-family: 'Quicksand', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 24px !important;
+    color: #000 !important;
+    /* text-decoration: none; */
+}

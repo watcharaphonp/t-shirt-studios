@@ -1,0 +1,45 @@
+{
+    "name": "t-shirt-studio",
+    "private": true,
+    "scripts": {
+        "build": "remix build",
+        "dev": "remix dev --manual",
+        "predev": "npx kill-port 3000",
+        "start": "remix-serve ./build/index.js",
+        "lint": "eslint --ignore-pattern .gitignore --cache --cache-location ./node_modules/.cache/eslint . --fix",
+        "prettier": "npx prettier . --write"
+    },
+    "dependencies": {
+        "@emotion/cache": "latest",
+        "@emotion/react": "^11.13.3",
+        "@emotion/server": "latest",
+        "@emotion/styled": "^11.13.0",
+        "@eslint/js": "^9.10.0",
+        "@mui/icons-material": "^6.1.0",
+        "@mui/material": "^6.1.0",
+        "@remix-run/css-bundle": "latest",
+        "@remix-run/eslint-config": "^2.12.0",
+        "@remix-run/node": "latest",
+        "@remix-run/react": "latest",
+        "@remix-run/serve": "latest",
+        "@remix-run/server-runtime": "latest",
+        "@typescript-eslint/eslint-plugin": "^8.5.0",
+        "@typescript-eslint/parser": "^8.5.0",
+        "eslint": "^8.57.0",
+        "prettier": "^3.3.3",
+        "react": "latest",
+        "react-dom": "latest",
+        "react-swipeable": "^7.0.1",
+        "typescript-eslint": "^8.5.0"
+    },
+    "devDependencies": {
+        "@remix-run/dev": "latest",
+        "@types/react": "latest",
+        "@types/react-dom": "latest",
+        "typescript": "latest"
+    },
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "sideEffects": false
+}
