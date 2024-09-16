@@ -10,6 +10,7 @@ import {
     Link,
     Box,
 } from '@mui/material'
+import PhoneInput from './PhoneNumberInput'
 
 export default function ContactForm() {
     return (
@@ -50,13 +51,7 @@ export default function ContactForm() {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Phone Number"
-                            name="phoneNumber"
-                            variant="outlined"
-                            placeholder="Country Code + Phone Number"
-                        />
+                        <PhoneInput />
                     </Grid>
                     <Grid item xs={12}>
                         <FormControlLabel
