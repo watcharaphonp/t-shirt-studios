@@ -33,6 +33,27 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Borna'; /* The name you want to give your font */
+    src: url('/fonts/Borna-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Borna'; /* The name you want to give your font */
+    src: url('/fonts/Borna-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Borna'; /* The name you want to give your font */
+    src: url('/fonts/Borna-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
 @keyframes fade_left {
     from {
         left: -200px;
@@ -60,10 +81,14 @@
 body {
     background-color: #000 !important;
     color: #fff !important;
-    font-family: 'Quicksand', sans-serif !important;
+    font-family: 'Borna', sans-serif !important;
     font-weight: 400;
     margin: 0;
     padding: 0;
+}
+
+input {
+    font-family: 'Borna', sans-serif !important;
 }
 
 .page {
@@ -90,12 +115,27 @@ body {
 .contact-us-container {
     background-color: #000;
     height: 100%;
-    padding-top: 10px;
 }
 
 .contact-us-form-container {
     padding: 8% 5% !important;
     background-color: #fff;
+}
+
+img.contact-us-cover {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    right: -9999px;
+    bottom: -9999px;
+    margin: auto;
+}
+
+.contact-us-cover-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .control-dots {
@@ -138,6 +178,7 @@ body {
     animation-fill-mode: both;
     position: relative;
     line-height: 1.2;
+    font-weight: 500;
 }
 
 .carousel-btn {
@@ -148,16 +189,17 @@ body {
     background-color: #fff !important;
     color: #000 !important;
     font-size: 14px !important;
-    font-family: 'Quicksand', sans-serif !important;
-    font-weight: 700;
+    font-family: 'Borna', sans-serif !important;
+    font-weight: 700 !important;
     box-shadow: none !important;
     cursor: pointer;
     border-radius: 0.5px !important;
+}
 
-    &:hover {
-        background-color: rgb(0, 0, 0);
-        color: #fff;
-    }
+.carousel-btn:hover {
+    background-color: transparent !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
 }
 
 @media screen and (max-width: 600px) {

@@ -64,19 +64,20 @@ export default function Index() {
                             item
                             xs={12}
                             md={6}
-                            sx={{ display: { xs: 'none' } }}
+                            sx={{ display: { xs: 'none', md: 'block' } }}
                         >
-                            <img
-                                className=""
-                                src="assets/images/contact-us-cover.jpg"
-                                alt="contact-us-cover"
-                            />
+                            <div className="contact-us-cover-container">
+                                <img
+                                    className="contact-us-cover"
+                                    src="assets/images/contact-us-cover.jpg"
+                                    alt="contact-us-cover"
+                                />
+                            </div>
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <Footer />
-                    {/* <div>aaa</div> */}
                 </Grid>
             </Grid>
         </Page>

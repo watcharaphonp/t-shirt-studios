@@ -76,7 +76,7 @@ export default function ContactForm() {
                     </Grid>
                     <Grid item xs={12}>
                         <Button
-                            type="submit"
+                            // type="submit"
                             fullWidth
                             variant="contained"
                             sx={{
