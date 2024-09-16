@@ -48,7 +48,7 @@ export default function Index() {
             />
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <MainCarousel />
+                    <MainCarousel autoPlay />
                 </Grid>
                 <Grid item xs={12}>
                     <Grid className="contact-us-container" container>

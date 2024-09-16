@@ -1,11 +1,12 @@
-import { Fab } from '@mui/material'
+import { Fab, useMediaQuery } from '@mui/material'
 import DynamicDrawer from './DynamicDrawer'
 import { useState } from 'react'
 import type { Anchor } from '../types/drawer'
 import MenuIcon from '@mui/icons-material/Menu'
 
 function HamburgerButton() {
-    const position: Anchor = 'right'
+    const isMobile = useMediaQuery('(max-width: 600px)')
+    const position: Anchor = isMobile ? 'bottom' : 'right'
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
 
     const handleDrawerClose = () => {
@@ -26,7 +27,10 @@ function HamburgerButton() {
                         backgroundColor: '#f5f5f5',
                     },
                 }}
-                onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+                onClick={() => {
+                    console.log('click')
+                    return setIsDrawerOpen(!isDrawerOpen)
+                }}
             >
                 <MenuIcon />
             </Fab>

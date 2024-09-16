@@ -52,8 +52,8 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
             sx={{
                 width:
                     anchor === 'top' || anchor === 'bottom'
-                        ? '20vh'
-                        : { lg: '20vw', md: '20vw', sm: '40vh', xs: '40vh' },
+                        ? '90vw'
+                        : { lg: '25vw', md: '45vw', sm: '40vh', xs: '40vh' },
                 height: '60vh',
                 padding: 5,
                 zIndex: '9999',
@@ -65,13 +65,27 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                     <Typography
                         className="drawer-title"
                         variant="h5"
-                        sx={{ marginBottom: 2, textTransform: 'uppercase' }}
+                        sx={{
+                            marginBottom: 2,
+                            textTransform: 'uppercase',
+                            paddingTop: '8px',
+                        }}
                     >
                         This is your studio
                     </Typography>
                 </Grid>
                 <Grid item xs={2}>
-                    <Button variant="outlined" onClick={handleClose}>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            width: '24px',
+                            height: '30px',
+                            backgroundColor: 'transparent',
+                            border: '1px solid #000',
+                            color: '#000',
+                        }}
+                        onClick={handleClose}
+                    >
                         X
                     </Button>
                 </Grid>
@@ -95,7 +109,7 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                 sx={{
                     paddingTop:
                         anchor === 'bottom' || anchor === 'top'
-                            ? '20vh'
+                            ? '30vh'
                             : { md: '75vh', sm: '70vh', xs: '70vh' },
                 }}
             >
@@ -104,13 +118,26 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                         variant="contained"
                         color="primary"
                         fullWidth
-                        sx={{ marginBottom: 1 }}
+                        sx={{
+                            marginBottom: 1,
+                            backgroundColor: '#000',
+                            color: '#fff',
+                        }}
                     >
                         Sign Up
                     </Button>
                 </Grid>
                 <Grid item xs={6}>
-                    <Button variant="outlined" color="primary" fullWidth>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        fullWidth
+                        sx={{
+                            backgroundColor: 'transparent',
+                            border: '1px solid #000',
+                            color: '#000',
+                        }}
+                    >
                         Log In
                     </Button>
                 </Grid>
