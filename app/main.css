@@ -58,7 +58,7 @@
 }
 
 body {
-    background-color: #000;
+    background-color: #000 !important;
     color: #fff !important;
     font-family: 'Quicksand', sans-serif !important;
     font-weight: 400;
@@ -70,7 +70,7 @@ body {
     background-color: #000;
     color: #fff;
     width: 100vw;
-    height: 220vh;
+    height: 175vh;
     position: absolute;
     margin: 0;
     overflow: hidden;
@@ -87,28 +87,15 @@ body {
     font-family: 'Quicksand', sans-serif !important;
 }
 
-.first-section {
-    height: 100vh;
-    width: 100vw;
-    position: absolute;
+.contact-us-container {
+    background-color: #000;
+    height: 100%;
+    padding-top: 10px;
 }
 
-.second-section {
-    position: absolute;
-    margin-top: 100vh;
-    height: 60vh;
-    width: 100vw;
+.contact-us-form-container {
+    padding: 8% 5% !important;
     background-color: #fff;
-    color: #000;
-}
-
-.third-section {
-    position: absolute;
-    margin-top: 160vh;
-    height: 60vh;
-    width: 100vw;
-    background-color: #3f3939;
-    color: #fff;
 }
 
 .control-dots {
@@ -146,7 +133,7 @@ body {
 }
 
 .carousel-title {
-    font-size: min(15vh, max(60px, 11vw));
+    font-size: min(15vh, max(50px, 9vw));
     animation: fade_left 0.5s ease-in-out;
     animation-fill-mode: both;
     position: relative;
@@ -156,11 +143,11 @@ body {
 .carousel-btn {
     margin: 24px 0px !important;
     width: 250px;
-    height: 70px;
+    height: 50px;
     padding: 12px 0 !important;
     background-color: #fff !important;
     color: #000 !important;
-    font-size: 18px !important;
+    font-size: 14px !important;
     font-family: 'Quicksand', sans-serif !important;
     font-weight: 700;
     box-shadow: none !important;
@@ -184,10 +171,18 @@ body {
     }
 }
 
+.drawer-title {
+    font-size: 18px !important;
+}
+
+.dynamic-drawer {
+    z-index: 9999 !important;
+    font-size: 18px !important;
+}
+
 .menu-list-item {
     font-family: 'Quicksand', sans-serif !important;
     font-weight: 500 !important;
     font-size: 24px !important;
     color: #000 !important;
-    /* text-decoration: none; */
 }

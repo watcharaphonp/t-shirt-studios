@@ -12,6 +12,9 @@ import Header from '~/components/Header'
 import HamburgerButton from '~/components/HamburgerButton'
 import MainCarousel from '~/components/MainCarousel'
 import Page from '~/components/Page'
+import { Grid } from '@mui/material'
+import ContactForm from '~/components/ContactForm'
+import Footer from '~/components/Footer'
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
@@ -43,26 +46,39 @@ export default function Index() {
                 isDrawerOpen={isDrawerOpen}
                 onClose={handleDrawerClose}
             />
-            <div className="first-section">
-                <MainCarousel />
-            </div>
-            <div id="second-section" className="second-section">
-                <div
-                    className="second-section-title"
-                    style={{ textAlign: 'center' }}
-                >
-                    <h1>Section 2</h1>
-                </div>
-            </div>
-            <div
-                id="third-section"
-                className="third-section"
-                style={{ textAlign: 'center' }}
-            >
-                <div className="second-section-title">
-                    <h1>Section 3</h1>
-                </div>
-            </div>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <MainCarousel />
+                </Grid>
+                <Grid item xs={12}>
+                    <Grid className="contact-us-container" container>
+                        <Grid
+                            className="contact-us-form-container"
+                            item
+                            xs={12}
+                            md={6}
+                        >
+                            <ContactForm />
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            md={6}
+                            sx={{ display: { xs: 'none' } }}
+                        >
+                            <img
+                                className=""
+                                src="assets/images/contact-us-cover.jpg"
+                                alt="contact-us-cover"
+                            />
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                    <Footer />
+                    {/* <div>aaa</div> */}
+                </Grid>
+            </Grid>
         </Page>
     )
 }

@@ -23,7 +23,7 @@ function TopHeader() {
                 boxShadow: 'none',
                 zIndex: 999,
                 position: 'absolute',
-                padding: '2vh 0',
+                padding: '4vh 0',
             }}
             className="transparent-header-bar"
         >

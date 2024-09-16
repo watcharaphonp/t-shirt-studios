@@ -51,15 +51,19 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
         <Box
             sx={{
                 width:
-                    anchor === 'top' || anchor === 'bottom' ? '20vh' : '15vw',
+                    anchor === 'top' || anchor === 'bottom'
+                        ? '20vh'
+                        : { lg: '20vw', md: '20vw', sm: '40vh', xs: '40vh' },
+                height: '60vh',
                 padding: 5,
+                zIndex: '9999',
             }}
             role="presentation"
         >
             <Grid container spacing={2}>
                 <Grid item xs={10}>
-                    {/* Title */}
                     <Typography
+                        className="drawer-title"
                         variant="h5"
                         sx={{ marginBottom: 2, textTransform: 'uppercase' }}
                     >
@@ -92,7 +96,7 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                     paddingTop:
                         anchor === 'bottom' || anchor === 'top'
                             ? '20vh'
-                            : '85vh',
+                            : { md: '75vh', sm: '70vh', xs: '70vh' },
                 }}
             >
                 <Grid item xs={6}>
@@ -118,6 +122,7 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
         <div>
             <Fragment key={position}>
                 <Drawer
+                    className="dynamic-drawer"
                     anchor={position}
                     open={drawerPositionOpenState[position]}
                     onClose={handleClose}

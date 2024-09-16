@@ -1,5 +1,5 @@
 import { Box, Grid, Button } from '@mui/material'
-import type { FC} from 'react';
+import type { FC } from 'react'
 import React, { useEffect, useState } from 'react'
 import { useSwipeable } from 'react-swipeable'
 
@@ -8,6 +8,7 @@ interface CarouselItem {
     title: string
     description: string
     position: 'left' | 'right'
+    buttonTitle: string
 }
 
 interface CarouselProps {
@@ -16,15 +17,11 @@ interface CarouselProps {
 }
 
 const MainCarousel: FC<CarouselProps> = ({
-    interval = 6000,
+    interval = 3000,
     autoPlay = false,
 }) => {
     const [currentIndex, setCurrentIndex] = useState<number>(0)
     const [fade, setFade] = useState<'fade-in' | 'fade-out'>('fade-in')
-
-    useEffect(() => {
-        console.log(currentIndex)
-    }, [currentIndex])
 
     const items: CarouselItem[] = [
         {
@@ -33,6 +30,7 @@ const MainCarousel: FC<CarouselProps> = ({
             description:
                 'True Blanks is our premium in-house blanks label. Designed in our atelier and made responsibly, these innovative merch-specific garments set new standards in quality and attention to detail.',
             position: 'right',
+            buttonTitle: 'Meet our creators',
         },
         {
             image: '/assets/images/carousel-3.jpg',
@@ -40,6 +38,7 @@ const MainCarousel: FC<CarouselProps> = ({
             description:
                 'True Blanks is our premium in-house blanks label. Designed in our atelier and made responsibly, these innovative merch-specific garments set new standards in quality and attention to detail.',
             position: 'left',
+            buttonTitle: 'Get started',
         },
         {
             image: '/assets/images/carousel-1.jpg',
@@ -47,6 +46,7 @@ const MainCarousel: FC<CarouselProps> = ({
             description:
                 'True Blanks is our premium in-house blanks label. Designed in our atelier and made responsibly, these innovative merch-specific garments set new standards in quality and attention to detail.',
             position: 'right',
+            buttonTitle: 'View collections',
         },
     ]
 
@@ -134,7 +134,7 @@ const MainCarousel: FC<CarouselProps> = ({
                             {items[currentIndex].title}
                         </div>
                         <Button className="carousel-btn" variant="contained">
-                            View collections
+                            {items[currentIndex].buttonTitle}
                         </Button>
                     </Box>
                 </Grid>
