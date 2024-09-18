@@ -9,19 +9,12 @@ import {
     Typography,
     Link,
     Box,
+    FormControl,
+    FormHelperText,
 } from '@mui/material'
 import PhoneInput from './PhoneNumberInput'
-import { ContactUsFormSchema } from '../schemas/contact-us.schema'
-
-interface FormDataProps {
-    firstName: string
-    lastName: string
-    email: string
-    phoneNumber: string
-    company: string
-    phonePrefix: string
-    countryCode: string
-}
+import { ContactUsFormSchema } from '../schemas/contact-us'
+import type { ContactUsFormData } from '~/types/form'
 
 export default function ContactForm() {
     const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
@@ -35,11 +28,12 @@ export default function ContactForm() {
         let isFormValid: boolean = false
 
         // Convert FormData to an object
-        const values: FormDataProps = Object.fromEntries(
+        const values: ContactUsFormData = Object.fromEntries(
             formData.entries(),
-        ) as unknown as FormDataProps
+        ) as unknown as ContactUsFormData
 
         const result = ContactUsFormSchema.safeParse(values)
+        const { data: validFormData } = result
 
         if (!result.success) {
             const formattedErrors = result.error.errors.reduce(
@@ -56,10 +50,10 @@ export default function ContactForm() {
             isFormValid = true
         }
 
-        if (isFormValid) {
+        if (isFormValid && validFormData.agreeToPolicy === 'on') {
             // Form is valid, submit the form
-            const form = document.querySelector('form') as HTMLFormElement
-            form.submit()
+            // const form = document.querySelector('form') as HTMLFormElement
+            // form.submit()
         }
     }
 
@@ -115,20 +109,28 @@ export default function ContactForm() {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <FormControlLabel
-                            control={<Checkbox name="agreeToPolicy" />}
-                            label={
-                                <Typography
-                                    variant="body2"
-                                    style={{ color: '#000' }}
-                                >
-                                    You agree to our friendly{' '}
-                                    <Link href="#" underline="always">
-                                        Privacy Policy
-                                    </Link>
-                                </Typography>
-                            }
-                        />
+                        <FormControl
+                            error={!!formErrors.agreeToPolicy}
+                            component="fieldset"
+                        >
+                            <FormControlLabel
+                                control={<Checkbox name="agreeToPolicy" />}
+                                label={
+                                    <Typography
+                                        variant="body2"
+                                        style={{ color: '#000' }}
+                                    >
+                                        You agree to our friendly{' '}
+                                        <Link href="#" underline="always">
+                                            Privacy Policy
+                                        </Link>
+                                    </Typography>
+                                }
+                            />
+                            <FormHelperText>
+                                {formErrors.agreeToPolicy}
+                            </FormHelperText>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12}>
                         <Button

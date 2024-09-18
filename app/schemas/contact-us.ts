@@ -1,11 +1,9 @@
 import { z } from 'zod'
-import { PhoneNumberUtil } from 'google-libphonenumber'
+import { validatePhoneNumber } from '~/utils/PhoneNumberUtils'
 
-const phoneUtil = PhoneNumberUtil.getInstance()
 const defaultNameCharacterLimit: number = 100
-const phoneNumberLimit: number = 15
 
-const ContactUsFormSchema = z
+const ContactUsFormSchema: z.ZodType = z
     .object({
         firstName: z
             .string({
@@ -40,37 +38,18 @@ const ContactUsFormSchema = z
             })
             .min(1, 'email is required')
             .email('email must be a valid email'),
-        phoneNumber: z
-            .string({
-                invalid_type_error: 'Phone number must be a string',
-            })
-            .min(1, 'Phone number is required')
-            .max(
-                phoneNumberLimit,
-                `Phone number must be at most ${phoneNumberLimit} characters long`,
-            )
-            // Custom validation: Phone number must be numeric
-            .refine((phoneNumber) => /^\d+$/.test(phoneNumber), {
-                message: 'Phone number must contain only digits',
-            }),
+        phoneNumber: z.string(),
         phonePrefix: z.string().min(1, 'Phone Prefix is required'),
         countryCode: z.string().min(1, 'Country Code is required'),
+        agreeToPolicy: z
+            .string()
+            .refine((value) => value === 'on', {
+                message: 'You must agree to the privacy policy',
+            })
+            .default('off'),
     })
     .superRefine((data, ctx) => {
-        const { phonePrefix, countryCode, phoneNumber } = data
-
-        const isValid = phoneUtil.isValidNumberForRegion(
-            phoneUtil.parseAndKeepRawInput(phoneNumber, countryCode),
-            countryCode,
-        )
-
-        if (!isValid) {
-            ctx.addIssue({
-                code: 'custom',
-                path: ['phoneNumber'],
-                message: `${phonePrefix}${phoneNumber} is not valid phone number`,
-            })
-        }
+        validatePhoneNumber(data, ctx)
     })
 
 export { ContactUsFormSchema }
