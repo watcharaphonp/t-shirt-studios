@@ -28,125 +28,106 @@ const phoneUtil = PhoneNumberUtil.getInstance()
 
 export default function ContactForm() {
     const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
+    const characterLimit: number = 100
+    const phoneNumberLimit: number = 15
 
-    const validatePhoneNumber = (
-        phoneNumber: string,
-        phonePrefix: string,
-        countryCode: string,
-    ) => {
-        let isValid: boolean = false
-        try {
-            isValid = phoneUtil.isValidNumberForRegion(
+    const contactUsFormSchema = z
+        .object({
+            firstName: z
+                .string({
+                    invalid_type_error: 'First Name must be a string',
+                })
+                .min(1, 'First Name is required')
+                .max(
+                    characterLimit,
+                    `First Name must be at most ${characterLimit} characters long`,
+                ),
+            lastName: z
+                .string({
+                    invalid_type_error: 'Last Name must be a string',
+                })
+                .min(1, 'Last Name is required')
+                .max(
+                    characterLimit,
+                    `Last Name must be at most ${characterLimit} characters long`,
+                ),
+            company: z
+                .string({
+                    invalid_type_error: 'Company must be a string',
+                })
+                .min(1, 'Company is required')
+                .max(
+                    characterLimit,
+                    `Company must be at most ${characterLimit} characters long`,
+                ),
+            email: z
+                .string({
+                    invalid_type_error: 'email must be a string',
+                })
+                .min(1, 'email is required')
+                .email('email must be a valid email'),
+            phoneNumber: z
+                .string({
+                    invalid_type_error: 'Phone number must be a string',
+                })
+                .min(1, 'Phone number is required')
+                .max(
+                    phoneNumberLimit,
+                    `Phone number must be at most ${phoneNumberLimit} characters long`,
+                )
+                // Custom validation: Phone number must be numeric
+                .refine((phoneNumber) => /^\d+$/.test(phoneNumber), {
+                    message: 'Phone number must contain only digits',
+                }),
+            phonePrefix: z.string().min(1, 'Phone Prefix is required'),
+            countryCode: z.string().min(1, 'Country Code is required'),
+        })
+        .superRefine((data, ctx) => {
+            const { phonePrefix, countryCode, phoneNumber } = data
+
+            const isValid = phoneUtil.isValidNumberForRegion(
                 phoneUtil.parseAndKeepRawInput(phoneNumber, countryCode),
                 countryCode,
             )
 
             if (!isValid) {
-                throw new Error(`${phoneNumber} is not a valid phone number`)
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['phoneNumber'],
+                    message: `${phonePrefix}${phoneNumber} is not valid phone number`,
+                })
             }
-        } catch (e) {
-            throw new Error(`${phoneNumber} is not a valid phone number`)
-        }
-    }
+        })
 
-    const validateContactUsFormData = () => {
+    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault() // Prevent form submission
+
         // Create a FormData object
         const form = document.querySelector('form')
         const formData = new FormData(form as HTMLFormElement)
-        const characterLimit: number = 100
-        const phoneNumberLimit: number = 15
-        let isHasValidFormData: boolean = true
+        let isFormValid: boolean = false
 
         // Convert FormData to an object
         const values: FormDataProps = Object.fromEntries(
             formData.entries(),
         ) as unknown as FormDataProps
 
-        const fieldNames = Object.keys(values)
-        const inputElementList = document.querySelectorAll(
-            'input',
-        ) as NodeListOf<HTMLInputElement>
+        const result = contactUsFormSchema.safeParse(values)
 
-        let newErrors: { [key: string]: string } = {}
+        if (!result.success) {
+            const formattedErrors = result.error.errors.reduce(
+                (acc, error) => {
+                    acc[error.path[0]] = error.message
+                    return acc
+                },
+                {} as { [key: string]: string },
+            )
 
-        // Loop through each field and validate
-        fieldNames.forEach((fieldName, index) => {
-            const value = values[fieldName as keyof FormDataProps]
-
-            if (inputElementList.length && inputElementList[index].labels) {
-                const type = inputElementList[index].type
-                const label = inputElementList[index].labels[0]?.innerText
-
-                try {
-                    switch (type) {
-                        case 'text':
-                            z.string({
-                                invalid_type_error: `${label} must be a string`,
-                            })
-                                .min(1, `${label} is required`)
-                                .max(
-                                    characterLimit,
-                                    `${label} must be at most ${characterLimit} characters long`,
-                                )
-                                .parse(value)
-
-                            break
-
-                        case 'email':
-                            z.string({
-                                invalid_type_error: `${label} must be a string`,
-                            })
-                                .min(1, `${label} is required`)
-                                .email(`${label} must be a valid email`)
-                                .parse(value)
-
-                            break
-
-                        case 'tel':
-                            validatePhoneNumber(
-                                value,
-                                values.phonePrefix,
-                                values.countryCode,
-                            )
-                            z.string({
-                                invalid_type_error: `${label} must be a string`,
-                            })
-                                .min(1, `${label} is required`)
-                                .max(
-                                    phoneNumberLimit,
-                                    `${label} must be at most ${phoneNumberLimit} characters long`,
-                                )
-
-                                .parse(value)
-
-                            break
-
-                        case 'default':
-                            break
-                    }
-                } catch (err) {
-                    const error = err as Error
-                    const errorMessage =
-                        error.message.startsWith('[') ||
-                        error.message.startsWith('{')
-                            ? JSON.parse(error.message)[0].message
-                            : error.message
-                    // Capture the error but continue with validation for other fields
-                    newErrors[fieldName] = errorMessage
-                    isHasValidFormData = false
-                }
-            }
-        })
-
-        // Update error state
-        setFormErrors(newErrors)
-
-        return isHasValidFormData
-    }
-    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault() // Prevent form submission
-
-        const isFormValid = validateContactUsFormData()
+            setFormErrors(formattedErrors)
+        } else {
+            setFormErrors({})
+            isFormValid = true
+        }
 
         if (isFormValid) {
             // Form is valid, submit the form
