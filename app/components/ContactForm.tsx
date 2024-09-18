@@ -30,7 +30,7 @@ export default function ContactForm() {
         // Convert FormData to an object
         const values: ContactUsFormData = Object.fromEntries(
             formData.entries(),
-        ) as unknown as ContactUsFormData
+        ) as unknown
 
         const result = ContactUsFormSchema.safeParse(values)
         const { data: validFormData } = result
@@ -50,7 +50,8 @@ export default function ContactForm() {
             isFormValid = true
         }
 
-        if (isFormValid && validFormData.agreeToPolicy === 'on') {
+        if (isFormValid) {
+            console.log('Form submitted successfully:', validFormData)
             // Form is valid, submit the form
             // const form = document.querySelector('form') as HTMLFormElement
             // form.submit()
