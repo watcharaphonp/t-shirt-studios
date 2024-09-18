@@ -31,7 +31,6 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
         })
 
     useEffect(() => {
-        console.log('isDrawerOpen', isDrawerOpen)
         setDrawerPositionOpenState({
             ...drawerPositionOpenState,
             [position]: isDrawerOpen,

@@ -16,7 +16,15 @@ const countryOptions: CountryOption[] = Object.entries(countries).map(
     }),
 )
 
-export default function PhoneInput() {
+interface PhoneNumberFieldProps {
+    error?: boolean
+    helperText?: string
+}
+
+export default function PhoneNumberField({
+    error = false,
+    helperText = '',
+}: PhoneNumberFieldProps) {
     const [selectedCountry, setSelectedCountry] = useState<CountryOption>(
         countryOptions.find((country) => country.code === 'US') ||
             countryOptions[0],
@@ -75,7 +83,10 @@ export default function PhoneInput() {
                 renderInput={(params) => (
                     <TextField
                         {...params}
+                        label="Phone Prefix"
+                        name="phonePrefix"
                         variant="outlined"
+                        helperText={error ? ' ' : ''}
                         sx={{
                             width: '120px',
                             '& .MuiOutlinedInput-root': {
@@ -102,7 +113,10 @@ export default function PhoneInput() {
             />
             <TextField
                 variant="outlined"
+                label="Phone Number"
+                name="phoneNumber"
                 value={phoneNumber}
+                type="tel"
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="Phone number"
                 sx={{
@@ -113,6 +127,15 @@ export default function PhoneInput() {
                     },
                 }}
                 fullWidth
+                error={error}
+                helperText={helperText}
+            />
+            <TextField
+                type="hidden"
+                label="Country Code"
+                name="countryCode"
+                value={selectedCountry.code || ''}
+                sx={{ display: 'none' }}
             />
         </Box>
     )
