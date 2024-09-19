@@ -1,8 +1,6 @@
 import * as React from 'react'
 import type { MetaFunction, LinksFunction } from '@remix-run/node'
-import { json, Link as RemixLink } from '@remix-run/react'
-import Typography from '@mui/material/Typography'
-import Link from '@mui/material/Link'
+import { json } from '@remix-run/react'
 
 import styles from '../main.css'
 import DynamicDrawer from '../components/DynamicDrawer'
@@ -29,7 +27,6 @@ export const meta: MetaFunction = () => {
     return metaTags
 }
 
-// https://remix.run/docs/en/main/file-conventions/routes#basic-routes
 export default function Index() {
     const position: Anchor = 'right'
     const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false)

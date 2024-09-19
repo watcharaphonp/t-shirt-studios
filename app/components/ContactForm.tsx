@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Form } from '@remix-run/react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Form, useFetcher } from '@remix-run/react'
 import {
     TextField,
     Checkbox,
@@ -17,14 +17,43 @@ import { ContactUsFormSchema } from '../schemas/contact-us'
 import type { ContactUsFormData } from '~/types/form'
 
 export default function ContactForm() {
+    const fetcher = useFetcher() // use fetcher instead of normal form submission
     const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
+    const [submitted, setSubmitted] = useState(false)
+    const [checkboxChecked, setCheckboxChecked] = useState(false)
+    const phoneInputRef = useRef<HTMLInputElement | null>(null) // Reference for phone input
+
+    useEffect(() => {
+        const fetcherData: any = fetcher.data
+        if (fetcherData?.success) {
+            setSubmitted(true)
+
+            // Reset the form fields
+            const form = document.querySelector('form') as HTMLFormElement
+            form.reset()
+
+            // Reset phone input value (assuming PhoneInput takes a value prop)
+            if (phoneInputRef.current) {
+                phoneInputRef.current.value = '' // Clear phone input
+            }
+
+            // Reset checkbox
+            setCheckboxChecked(false)
+        }
+    }, [fetcher.data])
+
+    useEffect(() => {
+        if (submitted) {
+            console.log('clear and success')
+        }
+    }, [submitted])
 
     const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault() // Prevent form submission
 
         // Create a FormData object
-        const form = document.querySelector('form')
-        const formData = new FormData(form as HTMLFormElement)
+        const form = document.querySelector('form') as HTMLFormElement
+        const formData = new FormData(form)
         let isFormValid: boolean = false
 
         // Convert FormData to an object
@@ -33,7 +62,6 @@ export default function ContactForm() {
         ) as unknown
 
         const result = ContactUsFormSchema.safeParse(values)
-        const { data: validFormData } = result
 
         if (!result.success) {
             const formattedErrors = result.error.errors.reduce(
@@ -51,16 +79,16 @@ export default function ContactForm() {
         }
 
         if (isFormValid) {
-            console.log('Form submitted successfully:', validFormData)
-            // Form is valid, submit the form
-            // const form = document.querySelector('form') as HTMLFormElement
-            // form.submit()
+            fetcher.submit(formData, {
+                method: 'post',
+                action: '/contact-us',
+            })
         }
     }
 
     return (
         <Box sx={{ maxWidth: '80%', margin: 'auto', padding: 2 }}>
-            <Form method="post">
+            <Form method="post" action="/contact-us">
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <TextField
@@ -107,6 +135,7 @@ export default function ContactForm() {
                         <PhoneInput
                             error={!!formErrors.phoneNumber}
                             helperText={formErrors.phoneNumber}
+                            inputRef={phoneInputRef}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -115,7 +144,15 @@ export default function ContactForm() {
                             component="fieldset"
                         >
                             <FormControlLabel
-                                control={<Checkbox name="agreeToPolicy" />}
+                                control={
+                                    <Checkbox
+                                        name="agreeToPolicy"
+                                        checked={checkboxChecked}
+                                        onChange={(e) =>
+                                            setCheckboxChecked(e.target.checked)
+                                        }
+                                    />
+                                }
                                 label={
                                     <Typography
                                         variant="body2"
@@ -136,7 +173,7 @@ export default function ContactForm() {
                     <Grid item xs={12}>
                         <Button
                             onClick={handleSubmit}
-                            // type="submit"
+                            type="submit"
                             fullWidth
                             variant="contained"
                             sx={{

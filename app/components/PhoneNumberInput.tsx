@@ -19,16 +19,19 @@ const countryOptions: CountryOption[] = Object.entries(countries).map(
 interface PhoneNumberFieldProps {
     error?: boolean
     helperText?: string
+    inputRef?: React.MutableRefObject<HTMLInputElement | null>
 }
 
 export default function PhoneNumberField({
     error = false,
     helperText = '',
+    inputRef,
 }: PhoneNumberFieldProps) {
-    const [selectedCountry, setSelectedCountry] = useState<CountryOption>(
+    const defaultCountryOption =
         countryOptions.find((country) => country.code === 'US') ||
-            countryOptions[0],
-    )
+        countryOptions[0]
+    const [selectedCountry, setSelectedCountry] =
+        useState<CountryOption>(defaultCountryOption)
     const [phoneNumber, setPhoneNumber] = useState('')
 
     const filterOptions = (
@@ -115,7 +118,8 @@ export default function PhoneNumberField({
                 variant="outlined"
                 label="Phone Number"
                 name="phoneNumber"
-                value={phoneNumber}
+                inputRef={inputRef}
+                defaultValue={phoneNumber}
                 type="tel"
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="Phone number"

@@ -29,6 +29,7 @@
         "countries-list": "^3.1.1",
         "eslint": "^8.57.0",
         "google-libphonenumber": "^3.2.38",
+        "nodemailer": "^6.9.15",
         "prettier": "^3.3.3",
         "react": "latest",
         "react-dom": "latest",
@@ -38,6 +39,7 @@
     },
     "devDependencies": {
         "@remix-run/dev": "latest",
+        "@types/nodemailer": "^6.4.16",
         "@types/react": "latest",
         "@types/react-dom": "latest",
         "typescript": "latest"
