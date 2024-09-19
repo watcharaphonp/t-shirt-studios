@@ -1,5 +1,11 @@
-import React, { useState } from 'react'
-import { TextField, Autocomplete, Box, InputAdornment } from '@mui/material'
+import React, {
+    useState,
+    useCallback,
+    forwardRef,
+    useImperativeHandle,
+} from 'react'
+import { TextField, Select, MenuItem, Box, FormHelperText } from '@mui/material'
+import { KeyboardArrowDown as KeyboardArrowDownIcon } from '@mui/icons-material'
 import { countries } from 'countries-list'
 
 interface CountryOption {
@@ -19,14 +25,12 @@ const countryOptions: CountryOption[] = Object.entries(countries).map(
 interface PhoneNumberFieldProps {
     error?: boolean
     helperText?: string
-    inputRef?: React.MutableRefObject<HTMLInputElement | null>
 }
 
-export default function PhoneNumberField({
-    error = false,
-    helperText = '',
-    inputRef,
-}: PhoneNumberFieldProps) {
+const PhoneNumberField = forwardRef(function PhoneNumberField(
+    { error = false, helperText = '' }: PhoneNumberFieldProps,
+    ref,
+) {
     const defaultCountryOption =
         countryOptions.find((country) => country.code === 'US') ||
         countryOptions[0]
@@ -34,113 +38,124 @@ export default function PhoneNumberField({
         useState<CountryOption>(defaultCountryOption)
     const [phoneNumber, setPhoneNumber] = useState('')
 
-    const filterOptions = (
-        options: CountryOption[],
-        { inputValue }: { inputValue: string },
-    ) => {
-        const searchTerm = inputValue.toLowerCase()
-        return options.filter(
-            (option) =>
-                option.name.toLowerCase().includes(searchTerm) ||
-                option.phone.includes(searchTerm) ||
-                option.code.toLowerCase().includes(searchTerm),
-        )
-    }
+    const handleCountryChange = useCallback(
+        (event: any) => {
+            const country = countryOptions.find(
+                (c) => c.code === event.target.value,
+            )
+            if (country) {
+                setSelectedCountry(country)
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [phoneNumber],
+    )
+
+    const handlePhoneNumberChange = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            setPhoneNumber(event.target.value)
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [selectedCountry.code],
+    )
+
+    // Expose resetPhoneNumber via ref
+    useImperativeHandle(ref, () => ({
+        resetPhoneNumber: () => {
+            setPhoneNumber('')
+            // setSelectedCountry(defaultCountryOption)
+        },
+    }))
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Autocomplete
-                disablePortal
-                disableClearable
-                options={countryOptions}
-                value={selectedCountry}
-                onChange={(event, newValue) => {
-                    if (newValue) {
-                        setSelectedCountry(newValue)
-                    }
-                }}
-                getOptionLabel={(option) => `+${option.phone}`}
-                filterOptions={filterOptions}
-                renderOption={(props, option) => (
-                    <Box
-                        component="li"
-                        sx={{
-                            '& > img': {
-                                mr: 2,
-                                flexShrink: 0,
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex' }}>
+                <Select
+                    name="countryCode"
+                    value={selectedCountry.code}
+                    onChange={handleCountryChange}
+                    sx={{
+                        width: '120px',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            borderRightWidth: 0,
+                        },
+                        '& .MuiSelect-select': {
+                            paddingY: '10.5px',
+                        },
+                    }}
+                    MenuProps={{
+                        PaperProps: {
+                            style: {
+                                maxHeight: 300,
+                                maxWidth: 270,
+                                marginLeft: '40px',
                             },
-                        }}
-                        {...props}
-                        key={`${option.code}-${option.phone}`}
-                    >
-                        <img
-                            loading="lazy"
-                            width="20"
-                            src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${option.code.toUpperCase()}.svg`}
-                            srcSet={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${option.code.toUpperCase()}.svg`}
-                            alt=""
-                        />
-                        +{option.phone}
-                    </Box>
-                )}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Phone Prefix"
-                        name="phonePrefix"
-                        variant="outlined"
-                        helperText={error ? ' ' : ''}
-                        sx={{
-                            width: '120px',
-                            '& .MuiOutlinedInput-root': {
-                                paddingRight: '8px',
-                            },
-                        }}
-                        InputProps={{
-                            ...params.InputProps,
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <img
-                                        loading="lazy"
-                                        width="20"
-                                        src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${selectedCountry.code.toUpperCase()}.svg`}
-                                        srcSet={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${selectedCountry.code.toUpperCase()}.svg`}
-                                        alt=""
-                                        style={{ marginRight: 8 }}
-                                    />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                )}
-            />
-            <TextField
-                variant="outlined"
-                label="Phone Number"
-                name="phoneNumber"
-                inputRef={inputRef}
-                defaultValue={phoneNumber}
-                type="tel"
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Phone number"
-                sx={{
-                    marginLeft: '-1px',
-                    '& .MuiOutlinedInput-root': {
-                        borderTopLeftRadius: 0,
-                        borderBottomLeftRadius: 0,
-                    },
-                }}
-                fullWidth
-                error={error}
-                helperText={helperText}
-            />
-            <TextField
-                type="hidden"
-                label="Country Code"
-                name="countryCode"
-                value={selectedCountry.code || ''}
-                sx={{ display: 'none' }}
-            />
+                        },
+                    }}
+                    IconComponent={KeyboardArrowDownIcon}
+                    renderValue={(value) => {
+                        const country = countryOptions.find(
+                            (c) => c.code === value,
+                        )
+                        return (
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <img
+                                    loading="lazy"
+                                    width="20"
+                                    height="15"
+                                    src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country?.code.toUpperCase()}.svg`}
+                                    alt=""
+                                    style={{ marginRight: 8 }}
+                                />
+                                +{country?.phone}
+                            </Box>
+                        )
+                    }}
+                >
+                    {countryOptions.map((option) => (
+                        <MenuItem key={option.code} value={option.code}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <img
+                                    loading="lazy"
+                                    width="20"
+                                    height="15"
+                                    src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${option.code.toUpperCase()}.svg`}
+                                    alt=""
+                                    style={{ marginRight: 8 }}
+                                />
+                                +{option.phone} {option.name}
+                            </Box>
+                        </MenuItem>
+                    ))}
+                </Select>
+                <TextField
+                    name="phoneNumber"
+                    variant="outlined"
+                    value={phoneNumber}
+                    onChange={handlePhoneNumberChange}
+                    placeholder="Phone number"
+                    error={error}
+                    fullWidth
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                        },
+                    }}
+                />
+                <TextField
+                    type="hidden"
+                    label="Phone prefix"
+                    name="phonePrefix"
+                    value={`+${selectedCountry.phone}`}
+                    sx={{ display: 'none' }}
+                />
+            </Box>
+            {helperText && (
+                <FormHelperText error={error}>{helperText}</FormHelperText>
+            )}
         </Box>
     )
-}
+})
+
+export default PhoneNumberField
