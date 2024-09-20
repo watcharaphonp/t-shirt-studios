@@ -66,7 +66,7 @@ export default function Index() {
                             <div className="contact-us-cover-container">
                                 <img
                                     className="contact-us-cover"
-                                    src="assets/images/contact-us-cover.jpg"
+                                    src="assets/images/contact-us-cover2.jpg"
                                     alt="contact-us-cover"
                                 />
                             </div>

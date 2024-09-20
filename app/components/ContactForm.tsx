@@ -113,6 +113,7 @@ export default function ContactForm() {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                placeholder="Enter your first name"
                                 fullWidth
                                 label="First Name"
                                 name="firstName"
@@ -123,6 +124,7 @@ export default function ContactForm() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                placeholder="Enter your last name"
                                 fullWidth
                                 label="Last Name"
                                 name="lastName"
@@ -133,6 +135,7 @@ export default function ContactForm() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                placeholder="Enter your company name"
                                 fullWidth
                                 label="Company"
                                 name="company"
@@ -143,6 +146,7 @@ export default function ContactForm() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                placeholder="example@gmail.com"
                                 fullWidth
                                 label="E-mail"
                                 name="email"

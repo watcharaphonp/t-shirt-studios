@@ -17,7 +17,7 @@ interface CarouselProps {
 }
 
 const MainCarousel: FC<CarouselProps> = ({
-    interval = 3000,
+    interval = 7000,
     autoPlay = false,
 }) => {
     const [currentIndex, setCurrentIndex] = useState<number>(0)
