@@ -76,7 +76,8 @@ export default function Footer() {
                         }}
                         aria-label="Facebook"
                         component="a"
-                        href="#"
+                        href="https://www.facebook.com/VIBALCORP"
+                        target="_blank"
                     >
                         <FacebookIcon />
                     </IconButton>
@@ -88,7 +89,8 @@ export default function Footer() {
                         }}
                         aria-label="Instagram"
                         component="a"
-                        href="#"
+                        href="https://www.instagram.com/vibalcorp"
+                        target="_blank"
                     >
                         <InstagramIcon />
                     </IconButton>
