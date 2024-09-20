@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Container, Typography, Link, IconButton } from '@mui/material'
+import { Box, Typography, Link, IconButton } from '@mui/material'
 import FacebookIcon from '@mui/icons-material/Facebook'
 import InstagramIcon from '@mui/icons-material/Instagram'
 
@@ -32,13 +32,12 @@ export default function Footer() {
                         mb: { xs: 2, md: 0 },
                     }}
                 >
-                    <Typography
-                        variant="h6"
-                        component="span"
-                        sx={{ mr: 2, fontWeight: 'bold' }}
-                    >
-                        VIBAL
-                    </Typography>
+                    <img
+                        src="/assets/images/VIBAL-LOGO-DARK.png"
+                        alt="VIBAL"
+                        width="100px"
+                        height="55px"
+                    />
                     <Typography variant="body2" color="text.secondary">
                         © 2024, VIBAL
                     </Typography>
@@ -51,22 +50,30 @@ export default function Footer() {
 
                         flexGrow: 1,
                         mb: { xs: 2, md: 1 },
+                        paddingTop: '6px',
                     }}
                 >
-                    <Link href="#" color="inherit" sx={{ mx: 1 }}>
+                    <Link href="" color="inherit" sx={{ mx: 1 }}>
                         Term & Condition
                     </Link>
-                    <Link href="#" color="inherit" sx={{ mx: 1 }}>
+                    <Link href="" color="inherit" sx={{ mx: 1 }}>
                         Term of Service
                     </Link>
-                    <Link href="#" color="inherit" sx={{ mx: 1 }}>
-                        Privacy Policy
+                    <Link href="" color="inherit" sx={{ mx: 1 }}>
+                        Privacy
+                    </Link>
+                    <Link href="" color="inherit" sx={{ mx: 1 }}>
+                        Help
                     </Link>
                 </Box>
 
                 <Box>
                     <IconButton
-                        color="inherit"
+                        sx={{
+                            color: '#fff',
+                            backgroundColor: '#000',
+                            margin: '0 6px',
+                        }}
                         aria-label="Facebook"
                         component="a"
                         href="#"
@@ -74,7 +81,11 @@ export default function Footer() {
                         <FacebookIcon />
                     </IconButton>
                     <IconButton
-                        color="inherit"
+                        sx={{
+                            color: '#fff',
+                            backgroundColor: '#000',
+                            margin: '0 6px',
+                        }}
                         aria-label="Instagram"
                         component="a"
                         href="#"

@@ -31,7 +31,6 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
         })
 
     useEffect(() => {
-        console.log('isDrawerOpen', isDrawerOpen)
         setDrawerPositionOpenState({
             ...drawerPositionOpenState,
             [position]: isDrawerOpen,
@@ -45,6 +44,14 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
         })
 
         onClose()
+    }
+
+    const scrollToSection = (id: string) => {
+        const element = document.getElementById(id)
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' })
+            handleClose()
+        }
     }
 
     const list = (anchor: Anchor) => (
@@ -95,7 +102,10 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <List>
-                        <ListItemButton component="a" href="#simple-list">
+                        <ListItemButton
+                            component="a"
+                            onClick={() => scrollToSection('contact-us')}
+                        >
                             <div className="menu-list-item">Contact Us</div>
                         </ListItemButton>
                     </List>
