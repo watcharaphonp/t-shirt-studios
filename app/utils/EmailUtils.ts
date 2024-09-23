@@ -65,3 +65,49 @@ export const generateCutomerSupportEmail = (
                 `,
     }
 }
+
+export const generateContactUserEmail = (requestDetail: ContactUsFormData) => {
+    return {
+        text: `
+    Dear ${requestDetail.firstName} ${requestDetail.lastName},
+    
+    We have received a new request from a user through our system. Please review the details below and reach out to the user as soon as possible.
+    
+    ---
+    
+    **User Details:**
+    
+    - **Name:** ${requestDetail.firstName} ${requestDetail.lastName}
+    - **Company:** ${requestDetail.company}
+    - **Email:** ${requestDetail.email}
+    - **Phone Number:** ${requestDetail.phoneNumber}
+    
+    ---
+    
+    Best regards,
+    Support Team
+    `,
+
+        html: `
+    <p>Dear ${requestDetail.firstName} ${requestDetail.lastName},</p>
+    
+    <p>We have received a new request from a user through our system. Please review the details below and reach out to the user as soon as possible.</p>
+    
+    <p></p>
+    
+    <p>User Details:</p>
+    
+    <ul>
+        <li><b>Name:</b> ${requestDetail.firstName} ${requestDetail.lastName}</li>
+        <li><b>Company:</b> ${requestDetail.company}</li>
+        <li><b>Email:</b> ${requestDetail.email}</li>
+        <li><b>Phone Number:</b> ${requestDetail.phoneNumber}</li>
+    </ul>
+    
+    <p></p>
+    
+    <p>Best regards,</p>
+    <p>Support Team</p>
+    `,
+    }
+}
