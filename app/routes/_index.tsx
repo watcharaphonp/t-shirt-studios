@@ -13,16 +13,17 @@ import Page from '~/components/Page'
 import { Grid } from '@mui/material'
 import ContactUsForm from '~/components/ContactUsForm'
 import Footer from '~/components/Footer'
+import { routeConfig } from '~/configs'
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
 export function loader() {
-    return json({ appName: process.env.APP_NAME })
+    return json(routeConfig)
 }
 
 export const meta: MetaFunction = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const metaTags = useGenerateMeta('routes/_index', 'Home')
+    const metaTags = useGenerateMeta()
 
     return metaTags
 }

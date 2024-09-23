@@ -27,6 +27,7 @@
         "@typescript-eslint/eslint-plugin": "^8.5.0",
         "@typescript-eslint/parser": "^8.5.0",
         "countries-list": "^3.1.1",
+        "dotenv": "^16.4.5",
         "eslint": "^8.57.0",
         "firebase": "^10.13.2",
         "google-libphonenumber": "^3.2.38",
