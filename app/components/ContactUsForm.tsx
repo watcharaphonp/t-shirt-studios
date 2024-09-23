@@ -16,7 +16,7 @@ import PhoneInput from './PhoneNumberInput'
 import { ContactUsFormSchema } from '../schemas/contact-us'
 import type { ContactUsFormData } from '~/types/form'
 
-export default function ContactForm() {
+export default function ContactUsForm() {
     const fetcher = useFetcher() // use fetcher instead of normal form submission
     const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
     const [checkboxChecked, setCheckboxChecked] = useState(false)
@@ -73,13 +73,18 @@ export default function ContactForm() {
     return (
         <Box
             id="contact-us"
-            sx={{ maxWidth: '80%', margin: 'auto', padding: 2 }}
+            sx={{
+                maxWidth: '80%',
+                margin: 'auto',
+                padding: 2,
+                height: '480px',
+            }}
         >
             {showSuccessMessage ? (
                 <Grid
                     container
                     sx={{
-                        padding: 2,
+                        padding: '100px 0',
                         color: '#000',
                     }}
                 >

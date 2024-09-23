@@ -56,7 +56,11 @@ function TopHeader() {
                         },
                     }}
                 >
-                    <Button className="header-bar-btn" sx={buttonStyles}>
+                    <Button
+                        className="header-bar-btn"
+                        sx={buttonStyles}
+                        href="#"
+                    >
                         Sign up
                     </Button>
                     <Typography

@@ -17,10 +17,15 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     const mailService = new MailService(config)
-    await mailService.sendEmailFromSystem({
+    await mailService.sendEmailToCustomerSupport({
         requestDetail: formDataObject,
         message: 'Please contact me back.',
         Mailto: process.env.CUSTOMER_SUPPORT_MAIL_ADDRESS ?? '',
+        subject: 'New Request from User - Immediate Action Required',
+    })
+
+    await mailService.sendEmailToContactUser({
+        requestDetail: formDataObject,
         subject: 'New Request from User - Immediate Action Required',
     })
 

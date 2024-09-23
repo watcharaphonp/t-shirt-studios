@@ -30,7 +30,7 @@ const MainCarousel: FC<CarouselProps> = ({
             description:
                 'True Blanks is our premium in-house blanks label. Designed in our atelier and made responsibly, these innovative merch-specific garments set new standards in quality and attention to detail.',
             position: 'right',
-            buttonTitle: 'Meet our creators',
+            buttonTitle: 'Get started',
         },
         {
             image: '/assets/images/carousel-3.jpg',
@@ -46,7 +46,7 @@ const MainCarousel: FC<CarouselProps> = ({
             description:
                 'True Blanks is our premium in-house blanks label. Designed in our atelier and made responsibly, these innovative merch-specific garments set new standards in quality and attention to detail.',
             position: 'right',
-            buttonTitle: 'View collections',
+            buttonTitle: 'Get started',
         },
     ]
 

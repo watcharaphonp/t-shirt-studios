@@ -28,6 +28,7 @@
         "@typescript-eslint/parser": "^8.5.0",
         "countries-list": "^3.1.1",
         "eslint": "^8.57.0",
+        "firebase": "^10.13.2",
         "google-libphonenumber": "^3.2.38",
         "nodemailer": "^6.9.15",
         "prettier": "^3.3.3",
