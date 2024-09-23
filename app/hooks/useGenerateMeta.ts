@@ -1,13 +1,23 @@
 import { useMatches } from '@remix-run/react'
+import { useLocation } from 'react-router-dom'
 
-export const useGenerateMeta = (routeId: string, defaultPageName: string) => {
+export const useGenerateMeta = () => {
+    const location = useLocation()
     const matches = useMatches()
-    const match = matches.find((match: { id: string }) => match.id === routeId)
-
+    const locationPath = location.pathname.substring(1)
+    const defaultPageName = locationPath === '' ? 'Home' : undefined
+    const match = matches.find(
+        (match: { id: string }) =>
+            match.id ===
+            `routes/${defaultPageName !== 'Home' ? locationPath : '_index'}`,
+    )
     const data: any = match?.data
-
-    const appName = data?.appName || 'Default App Name'
-    const title = `${appName} - ${defaultPageName}`
+    const appName = data?.appName
+    const pageName =
+        defaultPageName ||
+        data?.pageName ||
+        `${locationPath.charAt(0).toUpperCase() + locationPath.slice(1)}`
+    const title = appName ? `${appName} - ${pageName}` : pageName
     const description = data?.description || 'Default description for the page.'
 
     return [

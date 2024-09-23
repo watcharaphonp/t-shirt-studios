@@ -1,6 +1,9 @@
 import type { ContactUsFormData } from '~/types/form'
 import nodemailer from 'nodemailer'
-import { generateCutomerSupportEmail } from '~/utils/EmailUtils'
+import {
+    generateContactUserEmail,
+    generateCutomerSupportEmail,
+} from '~/utils/EmailUtils'
 
 export type MailServiceConfig = {
     serviceMailProvider: string
@@ -14,7 +17,7 @@ export class MailService {
         this.config = config
     }
 
-    async sendEmailFromSystem({
+    async sendEmailToCustomerSupport({
         requestDetail,
         message,
         Mailto,
@@ -40,6 +43,40 @@ export class MailService {
         let mailOptions = {
             from: this.config.serviceMailAddress,
             to: Mailto,
+            subject: subject,
+            ...mailContent,
+        }
+
+        try {
+            let info = await transporter.sendMail(mailOptions)
+            console.log('Email sent:', info.response)
+        } catch (error) {
+            console.error('Error sending email:', error)
+        }
+    }
+
+    async sendEmailToContactUser({
+        requestDetail,
+        subject,
+    }: {
+        requestDetail: ContactUsFormData
+        subject: string
+    }) {
+        const config = this.config
+
+        let transporter = nodemailer.createTransport({
+            service: config.serviceMailProvider,
+            auth: {
+                user: config.serviceMailAddress,
+                pass: config.serviceMailPassword,
+            },
+        })
+
+        const mailContent = generateContactUserEmail(requestDetail)
+
+        let mailOptions = {
+            from: this.config.serviceMailAddress,
+            to: requestDetail.email,
             subject: subject,
             ...mailContent,
         }

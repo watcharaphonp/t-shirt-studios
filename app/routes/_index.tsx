@@ -11,18 +11,19 @@ import HamburgerButton from '~/components/HamburgerButton'
 import MainCarousel from '~/components/MainCarousel'
 import Page from '~/components/Page'
 import { Grid } from '@mui/material'
-import ContactForm from '~/components/ContactForm'
+import ContactUsForm from '~/components/ContactUsForm'
 import Footer from '~/components/Footer'
+import { routeConfig } from '~/configs'
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
 export function loader() {
-    return json({ appName: process.env.APP_NAME })
+    return json(routeConfig)
 }
 
 export const meta: MetaFunction = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const metaTags = useGenerateMeta('routes/_index', 'Home')
+    const metaTags = useGenerateMeta()
 
     return metaTags
 }
@@ -47,7 +48,7 @@ export default function Index() {
                 <Grid item xs={12}>
                     <MainCarousel autoPlay />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className="section-container">
                     <Grid className="contact-us-container" container>
                         <Grid
                             className="contact-us-form-container"
@@ -55,7 +56,7 @@ export default function Index() {
                             xs={12}
                             md={6}
                         >
-                            <ContactForm />
+                            <ContactUsForm />
                         </Grid>
                         <Grid
                             item
@@ -73,7 +74,7 @@ export default function Index() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className="section-container">
                     <Footer />
                 </Grid>
             </Grid>
