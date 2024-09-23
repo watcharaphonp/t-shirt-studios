@@ -11,7 +11,7 @@ import HamburgerButton from '~/components/HamburgerButton'
 import MainCarousel from '~/components/MainCarousel'
 import Page from '~/components/Page'
 import { Grid } from '@mui/material'
-import ContactForm from '~/components/ContactForm'
+import ContactUsForm from '~/components/ContactUsForm'
 import Footer from '~/components/Footer'
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
@@ -47,7 +47,7 @@ export default function Index() {
                 <Grid item xs={12}>
                     <MainCarousel autoPlay />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className="section-container">
                     <Grid className="contact-us-container" container>
                         <Grid
                             className="contact-us-form-container"
@@ -55,7 +55,7 @@ export default function Index() {
                             xs={12}
                             md={6}
                         >
-                            <ContactForm />
+                            <ContactUsForm />
                         </Grid>
                         <Grid
                             item
@@ -73,7 +73,7 @@ export default function Index() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className="section-container">
                     <Footer />
                 </Grid>
             </Grid>

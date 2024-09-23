@@ -101,6 +101,10 @@ input {
     overflow: hidden;
 }
 
+.section-container {
+    padding-top: 0px !important;
+}
+
 .header-bar {
     font-family: 'Quicksand', sans-serif !important;
     font-weight: 400;
@@ -208,6 +212,22 @@ img.contact-us-cover {
     .right-content,
     .left-content {
         padding: 24vh 4vw !important;
+    }
+}
+
+@media screen and (max-height: 600px) {
+    .dynamic-drawer > div.MuiDrawer-paperAnchorRight {
+        width: 40vw !important;
+
+        & div {
+            width: 100%;
+            height: 40%;
+            margin-top: -12px;
+        }
+    }
+
+    a:has(> .menu-list-item) {
+        padding-top: 24px;
     }
 }
 
