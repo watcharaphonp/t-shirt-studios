@@ -7,10 +7,9 @@ import {
 } from '@mui/material'
 import { Form } from '@remix-run/react'
 import type { FirebaseError } from 'firebase/app'
-import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth'
+import { UserCredential } from 'firebase/auth'
 import { useState } from 'react'
-import { auth } from '~/libs/firebase'
-import { mapFirebaseAuthError } from '~/utils/FirebaseUtils'
+import { FirebaseService } from '~/services/FirebaseService'
 import { getFormData } from '~/utils/FormUtils'
 
 const LoginForm = () => {
@@ -30,8 +29,7 @@ const LoginForm = () => {
             setIsLoggedIn(false)
             setIsFormSubmitable(false)
             setIsLoading(true)
-            const user: UserCredential = await signInWithEmailAndPassword(
-                auth,
+            const user: UserCredential = await FirebaseService.signIn(
                 email,
                 password,
             )
@@ -42,7 +40,7 @@ const LoginForm = () => {
             setErrorMessage('')
         } catch (error) {
             console.log((error as FirebaseError).code)
-            const errorMessage = mapFirebaseAuthError(
+            const errorMessage = FirebaseService.mapFirebaseAuthError(
                 (error as FirebaseError).code,
             )
             setErrorMessage(errorMessage)

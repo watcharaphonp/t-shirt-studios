@@ -8,15 +8,25 @@ import {
     ScrollRestoration,
     useRouteError,
     isRouteErrorResponse,
+    json,
+    useLoaderData,
 } from '@remix-run/react'
 import { withEmotionCache } from '@emotion/react'
 import { unstable_useEnhancedEffect as useEnhancedEffect } from '@mui/material'
 import theme from './theme'
 import ClientStyleContext from './ClientStyleContext'
+import { LoaderFunction } from '@remix-run/node'
+import { firebaseConfig } from './configs'
+import useFirebase from './hooks/useFirebase'
 
 interface DocumentProps {
     children: React.ReactNode
     title?: string
+}
+
+// Define the loader function
+export const loader: LoaderFunction = async () => {
+    return json(firebaseConfig)
 }
 
 const Document = withEmotionCache(
@@ -86,6 +96,10 @@ const Document = withEmotionCache(
 // https://remix.run/docs/en/main/route/component
 // https://remix.run/docs/en/main/file-conventions/routes
 export default function App() {
+    const firebaseConfig = useLoaderData<typeof loader>()
+
+    useFirebase(firebaseConfig)
+
     return (
         <Document>
             <Outlet />

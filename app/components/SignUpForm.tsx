@@ -1,10 +1,8 @@
 import { Grid, TextField, Button, Typography } from '@mui/material'
 import { Form } from '@remix-run/react'
 import type { FirebaseError } from 'firebase/app'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
-import { auth } from '~/libs/firebase'
-import { mapFirebaseAuthError } from '~/utils/FirebaseUtils'
+import { FirebaseService } from '~/services/FirebaseService'
 import { getFormData } from '~/utils/FormUtils'
 
 const SignUpForm = () => {
@@ -18,16 +16,13 @@ const SignUpForm = () => {
         const { email, password } = values
 
         try {
-            const user = await createUserWithEmailAndPassword(
-                auth,
-                email,
-                password,
-            )
+            const user = await FirebaseService.signup(email, password)
             setErrorMessage('')
             console.log(user)
             // sign up success
         } catch (error) {
-            const errorMessage = mapFirebaseAuthError(
+            console.log(error)
+            const errorMessage = FirebaseService.mapFirebaseAuthError(
                 (error as FirebaseError).code,
             )
             setErrorMessage(errorMessage)
@@ -35,6 +30,9 @@ const SignUpForm = () => {
     }
     return (
         <div style={{ padding: '20vh 40vw', textAlign: 'center' }}>
+            <div style={{ padding: '20px 40px' }}>
+                <Typography variant="h4">Signup</Typography>
+            </div>
             <Form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
