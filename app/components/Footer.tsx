@@ -73,6 +73,9 @@ export default function Footer() {
                             color: '#fff',
                             backgroundColor: '#000',
                             margin: '0 6px',
+                            '&:hover': {
+                                backgroundColor: '#000',
+                            },
                         }}
                         aria-label="Facebook"
                         component="a"
@@ -86,6 +89,10 @@ export default function Footer() {
                             color: '#fff',
                             backgroundColor: '#000',
                             margin: '0 6px',
+
+                            '&:hover': {
+                                backgroundColor: '#000',
+                            },
                         }}
                         aria-label="Instagram"
                         component="a"
