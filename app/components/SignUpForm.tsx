@@ -1,9 +1,11 @@
 import { Grid, TextField, Button, Typography } from '@mui/material'
 import { Form } from '@remix-run/react'
 import type { FirebaseError } from 'firebase/app'
+import type { UserCredential } from 'firebase/auth'
 import { useState } from 'react'
 import { FirebaseService } from '~/services/FirebaseService'
 import { getFormData } from '~/utils/FormUtils'
+import PasswordInput from './PasswordInput'
 
 const SignUpForm = () => {
     const [errorMessage, setErrorMessage] = useState('')
@@ -16,12 +18,14 @@ const SignUpForm = () => {
         const { email, password } = values
 
         try {
-            const user = await FirebaseService.signup(email, password)
+            const user: UserCredential = await FirebaseService.signup(
+                email,
+                password,
+            )
             setErrorMessage('')
-            console.log(user)
             // sign up success
+            await FirebaseService.sendVerificationEmail()
         } catch (error) {
-            console.log(error)
             const errorMessage = FirebaseService.mapFirebaseAuthError(
                 (error as FirebaseError).code,
             )
@@ -37,6 +41,7 @@ const SignUpForm = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <TextField
+                            type="email"
                             label="Email"
                             name="email"
                             required
@@ -45,13 +50,19 @@ const SignUpForm = () => {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField
-                            label="Password"
+                        <PasswordInput
                             name="password"
-                            type="password"
                             required
-                            fullWidth
                             error={errorMessage !== ''}
+                            label="Password"
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <PasswordInput
+                            name="confirm-password"
+                            required
+                            error={errorMessage !== ''}
+                            label="Confirm password"
                         />
                     </Grid>
                     <Grid item xs={12}>

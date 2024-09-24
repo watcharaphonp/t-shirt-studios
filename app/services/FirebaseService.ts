@@ -7,6 +7,8 @@ import {
     createUserWithEmailAndPassword,
     getAuth,
     signInWithEmailAndPassword,
+    sendEmailVerification,
+    updateProfile,
 } from 'firebase/auth'
 
 export class FirebaseService {
@@ -97,5 +99,24 @@ export class FirebaseService {
             appId: process.env.PUBLIC_FIREBASE_APP_ID!,
             measurementId: process.env.PUBLIC_FIREBASE_MEASUREMENT_ID!,
         }
+    }
+
+    public static async sendVerificationEmail(): Promise<void> {
+        this.ensureInitialized()
+        await sendEmailVerification(this.firebaseAuth!.currentUser!)
+    }
+
+    public static async updateUserProfile({
+        displayName = '',
+        photoURL = '',
+    }: {
+        displayName?: string
+        photoURL?: string
+    }): Promise<void> {
+        this.ensureInitialized()
+        await updateProfile(this.firebaseAuth!.currentUser!, {
+            displayName,
+            photoURL,
+        })
     }
 }
