@@ -26,7 +26,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     await mailService.sendEmailToContactUser({
         requestDetail: formDataObject,
-        subject: 'New Request from User - Immediate Action Required',
+        subject: `${process.env.APP_NAME} - We have received your request.`,
     })
 
     return json({ success: true, data: formDataObject })
