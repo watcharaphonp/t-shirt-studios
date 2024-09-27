@@ -71,13 +71,8 @@ const SignUpForm = () => {
             <Typography variant="overline" display="block" gutterBottom>
                 LET'S GET STARTED
             </Typography>
-            <Typography variant="h4" component="h1" gutterBottom>
+            <Typography variant="h5" component="h1" gutterBottom>
                 Sign up to Creator T-Shirt
-            </Typography>
-            <Typography variant="body1" paragraph>
-                MyStudio is where you'll bring your print-on-demand ideas to
-                life. It's your creative dashboard and the hub where you can get
-                an overview of everything you've made, ordered, or sold.
             </Typography>
             <Box
                 component="form"

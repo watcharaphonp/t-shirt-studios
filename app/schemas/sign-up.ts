@@ -38,7 +38,25 @@ const SignupSchema: z.ZodType = z
                 ].filter(Boolean).length
                 return charTypes >= 3
             }, 'Password must include at least 3 of the following: a lower case letter, an upper case letter, a number, a special character (!@#$%&)'),
-        confirmPassword: z.string().min(1, 'Confirm Password is required'),
+        confirmPassword: z
+            .string()
+            .min(8, 'Password must be at least 8 characters long')
+            .refine((value) => {
+                // Check for character types
+                const hasLowerCase = /[a-z]/.test(value)
+                const hasUpperCase = /[A-Z]/.test(value)
+                const hasNumber = /\d/.test(value)
+                const hasSpecialChar = /[!@#$%&]/.test(value)
+
+                // Count how many character types are present
+                const charTypes = [
+                    hasLowerCase,
+                    hasUpperCase,
+                    hasNumber,
+                    hasSpecialChar,
+                ].filter(Boolean).length
+                return charTypes >= 3
+            }, 'Password must include at least 3 of the following: a lower case letter, an upper case letter, a number, a special character (!@#$%&)'),
     })
     .superRefine((data, ctx) => {
         if (data.password !== data.confirmPassword) {
