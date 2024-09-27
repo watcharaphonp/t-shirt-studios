@@ -1,38 +1,56 @@
-import { TextField, Button, Typography, Box } from '@mui/material'
+import {
+    TextField,
+    Button,
+    Typography,
+    Box,
+    Link,
+    Divider,
+} from '@mui/material'
 import { useNavigate } from '@remix-run/react'
 import type { FirebaseError } from 'firebase/app'
 import { useEffect, useState } from 'react'
 import { useAuth } from '~/contexts/authContext'
-import { FirebaseService } from '~/services/FirebaseService'
+import { LoginSchema } from '~/schemas/login'
+import type { LoginFormData } from '~/types/form'
 import { getFormData } from '~/utils/FormUtils'
+import PasswordInput from './PasswordInput'
 
 const LoginForm = () => {
     const navigate = useNavigate() // Initialize useNavigate
     const { login, user } = useAuth()
-    const [errorMessage, setErrorMessage] = useState('')
-    const [isFormSubmitable, setIsFormSubmitable] = useState(true)
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [loginError, setLoginError] = useState('')
+    const [isSubmitable, setIsSubmitable] = useState(true)
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
+        setIsSubmitable(false)
         // Convert FormData to an object
-        const values: any = getFormData()
+        const values: LoginFormData = getFormData()
         const { email, password } = values
 
-        try {
-            setIsLoggedIn(false)
-            setIsFormSubmitable(false)
-            await login(email, password)
-            setIsFormSubmitable(true)
-            setIsLoggedIn(true)
-            setErrorMessage('')
-        } catch (error) {
-            console.log((error as FirebaseError).code)
-            const errorMessage = FirebaseService.mapFirebaseAuthError(
-                (error as FirebaseError).code,
+        const result = LoginSchema.safeParse(values)
+
+        if (!result.success) {
+            const formattedErrors = result.error.errors.reduce(
+                (acc, error) => {
+                    acc[error.path[0]] = error.message
+                    return acc
+                },
+                {} as { [key: string]: string },
             )
-            setErrorMessage(errorMessage)
+
+            setFormErrors(formattedErrors)
+        } else {
+            setFormErrors({})
+
+            try {
+                await login(email, password)
+                setLoginError('')
+                setIsSubmitable(true)
+            } catch (error) {
+                setLoginError((error as FirebaseError).message)
+            }
         }
     }
 
@@ -46,7 +64,6 @@ const LoginForm = () => {
     return (
         <Box
             sx={{
-                maxHeight: '100vh',
                 mx: 'auto',
                 mt: 4,
                 p: 2,
@@ -67,34 +84,95 @@ const LoginForm = () => {
                     name="email"
                     required
                     fullWidth
-                    error={errorMessage !== ''}
+                    error={!!formErrors.email}
+                    helperText={formErrors.email}
                     margin="normal"
+                    placeholder="Enter your email"
+                    InputLabelProps={{ shrink: true }}
                 />
-                <TextField
-                    label="Password"
+
+                <PasswordInput
                     name="password"
-                    type="password"
                     required
-                    fullWidth
-                    error={errorMessage !== ''}
-                    margin="normal"
+                    error={!!formErrors.password}
+                    helperText={formErrors.password}
+                    label="Password"
+                    sx={{ mt: 2 }}
+                    placeholder="Enter your password"
+                    shrink
+                    autoComplete="on"
                 />
+                <Link
+                    component={Button}
+                    onClick={() => {}}
+                    variant="caption"
+                    color="primary"
+                    sx={{
+                        float: 'right',
+                        textTransform: 'none',
+                        textDecoration: 'none',
+                    }}
+                >
+                    Forgot Password?
+                </Link>
                 <Button
                     sx={{ mt: 4, borderRadius: '1px', backgroundColor: '#000' }}
                     type="submit"
                     variant="contained"
-                    disabled={!isFormSubmitable}
+                    disabled={!isSubmitable}
                     fullWidth
                 >
                     Login
                 </Button>
-                {errorMessage && (
-                    <Typography color="error">{errorMessage}</Typography>
-                )}
-                {isLoggedIn && (
-                    <Typography color="success">Login successful</Typography>
+                {loginError && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {loginError}
+                    </Typography>
                 )}
             </Box>
+
+            <Typography
+                variant="caption"
+                display="block"
+                gutterBottom
+                sx={{ mt: 2, textAlign: 'center' }}
+            >
+                Don't have an account?{' '}
+                <Link
+                    component={Button}
+                    href="/signup"
+                    variant="caption"
+                    color="primary"
+                    sx={{ textTransform: 'none', textDecoration: 'none' }}
+                >
+                    Sign Up here
+                </Link>
+            </Typography>
+
+            <Divider
+                orientation="horizontal"
+                variant="middle"
+                flexItem
+                sx={{ mt: 4 }}
+            />
+
+            <Typography
+                variant="caption"
+                display="block"
+                gutterBottom
+                sx={{ mt: 2, textAlign: 'center' }}
+            >
+                Having trouble logging in or need help?{' '}
+                <Link
+                    component={Button}
+                    href="/#contact-us"
+                    variant="caption"
+                    color="primary"
+                    sx={{ textTransform: 'none', textDecoration: 'none' }}
+                >
+                    Contact Us
+                </Link>
+            </Typography>
         </Box>
     )
 }

@@ -10,11 +10,24 @@ import {
     sendEmailVerification,
     updateProfile,
 } from 'firebase/auth'
+import type { Firestore } from 'firebase/firestore'
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    collection,
+    addDoc,
+    query,
+    where,
+    getCountFromServer,
+} from 'firebase/firestore'
 
 export class FirebaseService {
     private static firebaseApp: FirebaseApp | null = null
     private static firebaseAnalytics: Analytics | null = null
     private static firebaseAuth: Auth | null = null
+    private static firestore: Firestore | null = null
 
     // Initialize Firebase with provided configuration
     public static async initialize(config: FirebaseOptions): Promise<void> {
@@ -22,12 +35,13 @@ export class FirebaseService {
             this.firebaseApp = initializeApp(config)
             this.firebaseAnalytics = getAnalytics(this.firebaseApp)
             this.firebaseAuth = getAuth(this.firebaseApp)
+            this.firestore = getFirestore(this.firebaseApp)
         }
     }
 
-    // Ensure Firebase Auth is initialized before using it
-    private static ensureInitialized(): void {
-        if (!this.firebaseAuth) {
+    // Ensure Firebase services are initialized before using them
+    public static ensureInitialized(): void {
+        if (!this.firebaseAuth || !this.firestore) {
             throw new Error(
                 'Firebase is not initialized. Call FirebaseService.initialize() first.',
             )
@@ -47,6 +61,87 @@ export class FirebaseService {
     // Get Firebase Auth instance
     public static getFirebaseAuth(): Auth | null {
         return this.firebaseAuth
+    }
+
+    // Firestore Methods
+    public static async addDocument(
+        collectionName: string,
+        data: any,
+    ): Promise<string> {
+        this.ensureInitialized()
+        try {
+            const docRef = await addDoc(
+                collection(this.firestore!, collectionName),
+                data,
+            )
+            return docRef.id
+        } catch (error) {
+            throw new Error(
+                'Error adding document to Firestore: ' +
+                    (error as Error).message,
+            )
+        }
+    }
+
+    public static async setDocument(
+        collectionName: string,
+        docId: string,
+        data: any,
+    ): Promise<void> {
+        this.ensureInitialized()
+        try {
+            await setDoc(doc(this.firestore!, collectionName, docId), data)
+        } catch (error) {
+            throw new Error(
+                'Error setting document in Firestore: ' +
+                    (error as Error).message,
+            )
+        }
+    }
+
+    public static async countDocumentsByWhereClause(
+        collectionName: string,
+        whereClause: { [key: string]: string },
+    ): Promise<number> {
+        this.ensureInitialized()
+        try {
+            const countSnapshot = await getCountFromServer(
+                query(
+                    collection(this.firestore!, collectionName),
+                    ...Object.keys(whereClause).map((key) =>
+                        where(key, '==', whereClause[key]),
+                    ),
+                ),
+            )
+            return countSnapshot.data().count
+        } catch (error) {
+            throw new Error(
+                'Error fetching documents from Firestore: ' +
+                    (error as Error).message,
+            )
+        }
+    }
+
+    public static async getDocumentById(
+        collectionName: string,
+        docId: string,
+    ): Promise<any> {
+        this.ensureInitialized()
+        try {
+            const docSnap = await getDoc(
+                doc(this.firestore!, collectionName, docId),
+            )
+            if (docSnap.exists()) {
+                return docSnap.data()
+            } else {
+                throw new Error('No document found.')
+            }
+        } catch (error) {
+            throw new Error(
+                'Error fetching document from Firestore: ' +
+                    (error as Error).message,
+            )
+        }
     }
 
     // User Signup with email and password
@@ -146,7 +241,7 @@ export class FirebaseService {
     public static mapFirebaseAuthError(errorCode: string): string {
         switch (errorCode) {
             case 'auth/invalid-credential':
-                return 'The email address or password is incorrect.'
+                return 'The email address or password is incorrect. Please check again.'
             case 'auth/email-already-in-use':
                 return 'The email is already registered with another account.'
             case 'auth/weak-password':

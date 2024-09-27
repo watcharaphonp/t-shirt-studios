@@ -26,11 +26,11 @@ export default function SignUp() {
                 lg={7}
                 sx={{
                     '& > div': {
-                        maxWidth: { xs: 'none', md: 'none', lg: '30vw' },
+                        maxWidth: { xs: 'none', md: 'none', lg: '36vw' },
                         padding: {
                             xs: '4vh 16vw',
                             md: '6vh 20vw',
-                            lg: '2vh 4vw',
+                            lg: '0 4vw',
                         },
                     },
                 }}

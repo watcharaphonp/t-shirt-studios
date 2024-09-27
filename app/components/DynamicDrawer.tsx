@@ -133,6 +133,7 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                                 variant="contained"
                                 color="primary"
                                 fullWidth
+                                href="/signup"
                                 sx={{
                                     marginBottom: 1,
                                     backgroundColor: '#000',
