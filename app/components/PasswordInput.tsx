@@ -10,33 +10,41 @@ import {
 import { useState } from 'react'
 
 interface PasswordInputProps {
-    errorMessage?: string
+    className?: string
     name?: string
     required?: boolean
     error?: boolean
     label?: string
     autoComplete?: string
+    sx?: any
+    helperText?: string
 }
 
 export default function PasswordInput({
-    errorMessage = '',
+    className = '',
     name,
     label = 'Password',
     required = false,
     error = false,
     autoComplete = 'new-password',
+    sx = {},
+    helperText = '',
 }: PasswordInputProps) {
     const [showPassword, setShowPassword] = useState(false)
 
     const handleClickShowPassword = () => setShowPassword((show) => !show)
 
     return (
-        <FormControl sx={{ width: '100%' }} variant="outlined">
+        <FormControl
+            sx={{ width: '100%', ...sx }}
+            variant="outlined"
+            className={className}
+        >
             <InputLabel htmlFor="outlined-adornment-password" error={error}>
                 {`${label} ${required ? '*' : ''}`}
             </InputLabel>
             <OutlinedInput
-                id="outlined-adornment-password"
+                inputProps={{ autoComplete }}
                 type={showPassword ? 'text' : 'password'}
                 endAdornment={
                     <InputAdornment position="end">
@@ -54,11 +62,10 @@ export default function PasswordInput({
                 required
                 fullWidth
                 error={error}
-                autoComplete={autoComplete}
             />
-            {errorMessage !== '' && (
-                <FormHelperText error={errorMessage !== ''}>
-                    {errorMessage}
+            {helperText !== '' && (
+                <FormHelperText error={helperText !== ''}>
+                    {helperText}
                 </FormHelperText>
             )}
         </FormControl>

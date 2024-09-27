@@ -1,21 +1,16 @@
-import {
-    Grid,
-    TextField,
-    Button,
-    Typography,
-    CircularProgress,
-} from '@mui/material'
-import { Form } from '@remix-run/react'
+import { TextField, Button, Typography, Box } from '@mui/material'
+import { useNavigate } from '@remix-run/react'
 import type { FirebaseError } from 'firebase/app'
-import { UserCredential } from 'firebase/auth'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useAuth } from '~/contexts/authContext'
 import { FirebaseService } from '~/services/FirebaseService'
 import { getFormData } from '~/utils/FormUtils'
 
 const LoginForm = () => {
+    const navigate = useNavigate() // Initialize useNavigate
+    const { login, user } = useAuth()
     const [errorMessage, setErrorMessage] = useState('')
     const [isFormSubmitable, setIsFormSubmitable] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -28,14 +23,8 @@ const LoginForm = () => {
         try {
             setIsLoggedIn(false)
             setIsFormSubmitable(false)
-            setIsLoading(true)
-            const user: UserCredential = await FirebaseService.signIn(
-                email,
-                password,
-            )
-            console.log(user)
+            await login(email, password)
             setIsFormSubmitable(true)
-            setIsLoading(false)
             setIsLoggedIn(true)
             setErrorMessage('')
         } catch (error) {
@@ -46,63 +35,67 @@ const LoginForm = () => {
             setErrorMessage(errorMessage)
         }
     }
+
+    useEffect(() => {
+        if (user !== null) {
+            navigate('/')
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user])
+
     return (
-        <div style={{ padding: '20vh 40vw', textAlign: 'center' }}>
-            <div style={{ padding: '20px 40px' }}>
-                <Typography variant="h4">Login</Typography>
-            </div>
-            <Form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Email"
-                            name="email"
-                            required
-                            fullWidth
-                            error={errorMessage !== ''}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Password"
-                            name="password"
-                            type="password"
-                            required
-                            fullWidth
-                            error={errorMessage !== ''}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            disabled={!isFormSubmitable}
-                        >
-                            Login
-                        </Button>
-                    </Grid>
-                    {isLoading && (
-                        <Grid item xs={12}>
-                            <CircularProgress color="inherit" />
-                        </Grid>
-                    )}
-                    {errorMessage && (
-                        <Grid item xs={12}>
-                            <Typography color="error">
-                                {errorMessage}
-                            </Typography>
-                        </Grid>
-                    )}
-                    {isLoggedIn && (
-                        <Grid item xs={12}>
-                            <Typography color="success">
-                                Login successful
-                            </Typography>
-                        </Grid>
-                    )}
-                </Grid>
-            </Form>
-        </div>
+        <Box
+            sx={{
+                maxHeight: '100vh',
+                mx: 'auto',
+                mt: 4,
+                p: 2,
+                textAlign: 'center',
+            }}
+        >
+            <Box
+                component="form"
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <Typography variant="h4" component="h1" gutterBottom>
+                    Login
+                </Typography>
+                <TextField
+                    label="Email"
+                    name="email"
+                    required
+                    fullWidth
+                    error={errorMessage !== ''}
+                    margin="normal"
+                />
+                <TextField
+                    label="Password"
+                    name="password"
+                    type="password"
+                    required
+                    fullWidth
+                    error={errorMessage !== ''}
+                    margin="normal"
+                />
+                <Button
+                    sx={{ mt: 4, borderRadius: '1px', backgroundColor: '#000' }}
+                    type="submit"
+                    variant="contained"
+                    disabled={!isFormSubmitable}
+                    fullWidth
+                >
+                    Login
+                </Button>
+                {errorMessage && (
+                    <Typography color="error">{errorMessage}</Typography>
+                )}
+                {isLoggedIn && (
+                    <Typography color="success">Login successful</Typography>
+                )}
+            </Box>
+        </Box>
     )
 }
 

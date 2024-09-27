@@ -1,85 +1,157 @@
-import { Grid, TextField, Button, Typography } from '@mui/material'
-import { Form } from '@remix-run/react'
-import type { FirebaseError } from 'firebase/app'
-import type { UserCredential } from 'firebase/auth'
-import { useState } from 'react'
+import { TextField, Button, Typography, Box } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { FirebaseService } from '~/services/FirebaseService'
 import { getFormData } from '~/utils/FormUtils'
 import PasswordInput from './PasswordInput'
+import { SignupSchema } from '~/schemas/sign-up'
+import type { SignupFormData } from '~/types/form'
+import { useAuth } from '~/contexts/authContext'
+import { useNavigate } from '@remix-run/react'
 
 const SignUpForm = () => {
-    const [errorMessage, setErrorMessage] = useState('')
+    const navigate = useNavigate() // Initialize useNavigate
+    const { login, user } = useAuth()
+    const [signupError, setSignupError] = useState('')
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         // Convert FormData to an object
-        const values: any = getFormData()
-        const { email, password } = values
+        const values: SignupFormData = getFormData()
 
-        try {
-            const user: UserCredential = await FirebaseService.signup(
-                email,
-                password,
+        // Validate form data with Zod schema
+        const result = SignupSchema.safeParse(values)
+
+        if (!result.success) {
+            // Collect errors from Zod validation
+            const formattedErrors = result.error.errors.reduce(
+                (acc: Record<string, string>, error) => {
+                    acc[error.path[0]] = error.message
+                    return acc
+                },
+                {},
             )
-            setErrorMessage('')
-            // sign up success
-            await FirebaseService.sendVerificationEmail()
-        } catch (error) {
-            const errorMessage = FirebaseService.mapFirebaseAuthError(
-                (error as FirebaseError).code,
-            )
-            setErrorMessage(errorMessage)
+            setFormErrors(formattedErrors)
+        } else {
+            setFormErrors({}) // Clear form errors if validation passed
+
+            try {
+                const { email, password } = values
+
+                await FirebaseService.signup(email, password)
+
+                setSignupError('') // Reset signup error
+
+                // sign-up success, send verification email
+                await FirebaseService.sendVerificationEmail()
+                await login(email, password)
+            } catch (error) {
+                setSignupError((error as Error).message)
+            }
         }
     }
+
+    useEffect(() => {
+        if (user !== null) {
+            navigate('/')
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user])
+
     return (
-        <div style={{ padding: '20vh 40vw', textAlign: 'center' }}>
-            <div style={{ padding: '20px 40px' }}>
-                <Typography variant="h4">Signup</Typography>
-            </div>
-            <Form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            type="email"
-                            label="Email"
-                            name="email"
-                            required
-                            fullWidth
-                            error={errorMessage !== ''}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <PasswordInput
-                            name="password"
-                            required
-                            error={errorMessage !== ''}
-                            label="Password"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <PasswordInput
-                            name="confirm-password"
-                            required
-                            error={errorMessage !== ''}
-                            label="Confirm password"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button type="submit" variant="contained">
-                            Signup
-                        </Button>
-                    </Grid>
-                    {errorMessage && (
-                        <Grid item xs={12}>
-                            <Typography color="error">
-                                {errorMessage}
-                            </Typography>
-                        </Grid>
-                    )}
-                </Grid>
-            </Form>
-        </div>
+        <Box
+            sx={{
+                maxHeight: '100vh',
+                mx: 'auto',
+                mt: 4,
+                p: 2,
+            }}
+        >
+            <Typography variant="overline" display="block" gutterBottom>
+                LET'S GET STARTED
+            </Typography>
+            <Typography variant="h4" component="h1" gutterBottom>
+                Sign up to Creator T-Shirt
+            </Typography>
+            <Typography variant="body1" paragraph>
+                MyStudio is where you'll bring your print-on-demand ideas to
+                life. It's your creative dashboard and the hub where you can get
+                an overview of everything you've made, ordered, or sold.
+            </Typography>
+            <Box
+                component="form"
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <TextField
+                    type="text"
+                    label="Full name"
+                    name="fullName"
+                    required
+                    fullWidth
+                    error={!!formErrors.fullName}
+                    helperText={formErrors.fullName}
+                    autoComplete="name"
+                    margin="normal"
+                />
+                <TextField
+                    type="email"
+                    label="Email"
+                    name="email"
+                    required
+                    fullWidth
+                    error={!!formErrors.email}
+                    helperText={formErrors.email}
+                    autoComplete="email"
+                    margin="normal"
+                />
+
+                <PasswordInput
+                    name="password"
+                    required
+                    error={!!formErrors.password}
+                    helperText={formErrors.password}
+                    label="Password"
+                    sx={{ mt: 2 }}
+                />
+                <Typography variant="caption" display="block" gutterBottom>
+                    Your password needs to be at least 8 characters including at
+                    least 3 of the following 4 types of characters: a lower case
+                    letter, an upper case letter, a number, a special character
+                    (such as !@#$%&).
+                </Typography>
+                <PasswordInput
+                    name="confirmPassword"
+                    required
+                    error={!!formErrors.confirmPassword}
+                    helperText={formErrors.confirmPassword}
+                    label="Confirm password"
+                    sx={{ mt: 2 }}
+                />
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                        borderRadius: '1px',
+                        fontWeight: 'bold',
+                        backgroundColor: '#000',
+                        mt: 4,
+                    }}
+                >
+                    Continue
+                </Button>
+
+                {signupError && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {signupError}
+                    </Typography>
+                )}
+            </Box>
+        </Box>
     )
 }
 

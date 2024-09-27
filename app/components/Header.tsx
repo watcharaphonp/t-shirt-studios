@@ -1,11 +1,13 @@
 import { AppBar, Toolbar, Typography, Box, Button } from '@mui/material'
 import { json, useLoaderData } from '@remix-run/react'
+import { useAuth } from '~/contexts/authContext'
 
 export function loader() {
     return json({ appName: process.env.APP_NAME })
 }
 
 function TopHeader() {
+    const { user, isLoading, logout } = useAuth()
     const logoUrl = '/assets/icons/app-logo2.png'
     const data = useLoaderData<typeof loader>()
     const buttonStyles = {
@@ -56,34 +58,55 @@ function TopHeader() {
                         },
                     }}
                 >
-                    <Button
-                        className="header-bar-btn"
-                        sx={buttonStyles}
-                        href="#"
-                    >
-                        Sign up
-                    </Button>
-                    <Typography
-                        className="header-bar-btn-sprt"
-                        variant="body1"
-                        component="span"
-                        sx={{
-                            color: 'white',
-                            mx: 1,
-                            fontSize: '28px',
-                            lineHeight: '28px',
-                            position: 'relative',
-                            top: '8px',
-                        }}
-                    >
-                        /
-                    </Typography>
-                    <Button
-                        className="header-bar-btn"
-                        sx={{ ...buttonStyles, mr: 15 }}
-                    >
-                        Log in
-                    </Button>
+                    {isLoading ? (
+                        // While loading, show a spinner or nothing
+                        <div />
+                    ) : user ? (
+                        <>
+                            <Button
+                                className="header-bar-btn"
+                                sx={{
+                                    ...buttonStyles,
+                                    marginRight: '8vw !important',
+                                }}
+                                onClick={() => logout()} // Call sign out on click
+                            >
+                                Logout
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                className="header-bar-btn"
+                                sx={{ ...buttonStyles, paddingRight: '20px' }}
+                                href="/signup"
+                            >
+                                Sign up
+                            </Button>
+                            <Typography
+                                className="header-bar-btn-sprt"
+                                variant="body1"
+                                component="span"
+                                sx={{
+                                    color: 'white',
+                                    mx: 1,
+                                    fontSize: '28px',
+                                    lineHeight: '28px',
+                                    position: 'relative',
+                                    top: '8px',
+                                }}
+                            >
+                                /
+                            </Typography>
+                            <Button
+                                className="header-bar-btn"
+                                sx={{ ...buttonStyles, mr: 15 }}
+                                href="/login"
+                            >
+                                Log in
+                            </Button>
+                        </>
+                    )}
                 </Box>
             </Toolbar>
         </AppBar>

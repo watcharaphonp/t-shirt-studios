@@ -10,6 +10,7 @@ import {
     ListItemButton,
     Typography,
 } from '@mui/material'
+import { useAuth } from '~/contexts/authContext'
 
 interface DynamicDrawerProps {
     position: Anchor
@@ -22,6 +23,7 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
     isDrawerOpen = false,
     onClose,
 }) => {
+    const { user, logout } = useAuth()
     const [drawerPositionOpenState, setDrawerPositionOpenState] =
         useState<DrawerOpenState>({
             top: false,
@@ -35,6 +37,7 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
             ...drawerPositionOpenState,
             [position]: isDrawerOpen,
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDrawerOpen])
 
     const handleClose = () => {
@@ -123,34 +126,57 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                             : { md: '75vh', sm: '70vh', xs: '70vh' },
                 }}
             >
-                <Grid item xs={6}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        sx={{
-                            marginBottom: 1,
-                            backgroundColor: '#000',
-                            color: '#fff',
-                        }}
-                    >
-                        Sign Up
-                    </Button>
-                </Grid>
-                <Grid item xs={6}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        fullWidth
-                        sx={{
-                            backgroundColor: 'transparent',
-                            border: '1px solid #000',
-                            color: '#000',
-                        }}
-                    >
-                        Log In
-                    </Button>
-                </Grid>
+                {user === null ? (
+                    <>
+                        <Grid item xs={6}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                sx={{
+                                    marginBottom: 1,
+                                    backgroundColor: '#000',
+                                    color: '#fff',
+                                }}
+                            >
+                                Sign Up
+                            </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                fullWidth
+                                sx={{
+                                    backgroundColor: 'transparent',
+                                    border: '1px solid #000',
+                                    color: '#000',
+                                }}
+                                href="/login"
+                            >
+                                Log In
+                            </Button>
+                        </Grid>
+                    </>
+                ) : (
+                    <>
+                        <Grid item xs={6}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                fullWidth
+                                sx={{
+                                    backgroundColor: '#000',
+                                    border: '1px solid #000',
+                                    color: '#fff',
+                                }}
+                                onClick={logout}
+                            >
+                                Logout
+                            </Button>
+                        </Grid>
+                    </>
+                )}
             </Grid>
         </Box>
     )
