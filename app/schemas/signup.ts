@@ -71,12 +71,9 @@ const SignupSchema: z.ZodType = z
     })
     .superRefine(async (data, ctx) => {
         await FirebaseService.ensureInitialized()
-        const userCount = await FirebaseService.countDocumentsByWhereClause(
-            'user-profile',
-            {
-                username: data.username,
-            },
-        )
+        const userCount = await FirebaseService.countDocuments('user-profile', {
+            username: data.username,
+        })
 
         if (userCount > 0) {
             ctx.addIssue({

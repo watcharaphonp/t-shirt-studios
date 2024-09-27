@@ -21,6 +21,7 @@ import {
     query,
     where,
     getCountFromServer,
+    getDocs,
 } from 'firebase/firestore'
 
 export class FirebaseService {
@@ -99,7 +100,7 @@ export class FirebaseService {
         }
     }
 
-    public static async countDocumentsByWhereClause(
+    public static async countDocuments(
         collectionName: string,
         whereClause: { [key: string]: string },
     ): Promise<number> {
@@ -114,6 +115,29 @@ export class FirebaseService {
                 ),
             )
             return countSnapshot.data().count
+        } catch (error) {
+            throw new Error(
+                'Error fetching documents from Firestore: ' +
+                    (error as Error).message,
+            )
+        }
+    }
+
+    public static async getDocuments(
+        collectionName: string,
+        whereClause: { [key: string]: string } = {},
+    ): Promise<any[]> {
+        this.ensureInitialized()
+        try {
+            const querySnapshot = await getDocs(
+                query(
+                    collection(this.firestore!, collectionName),
+                    ...Object.keys(whereClause).map((key) =>
+                        where(key, '==', whereClause[key]),
+                    ),
+                ),
+            )
+            return querySnapshot.docs.map((doc) => doc.data())
         } catch (error) {
             throw new Error(
                 'Error fetching documents from Firestore: ' +
