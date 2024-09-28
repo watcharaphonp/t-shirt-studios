@@ -104,7 +104,7 @@ const LoginForm = () => {
                 />
                 <Link
                     component={Button}
-                    onClick={() => {}}
+                    href="/forgot-password"
                     variant="caption"
                     color="primary"
                     sx={{

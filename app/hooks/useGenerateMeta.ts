@@ -12,12 +12,12 @@ export const useGenerateMeta = () => {
             `routes/${defaultPageName !== 'Home' ? locationPath : '_index'}`,
     )
     const data: any = match?.data
-    const appName = data?.appName
+    // const appName = data?.appName
     const pageName =
         defaultPageName ||
         data?.pageName ||
         `${locationPath.charAt(0).toUpperCase() + locationPath.slice(1)}`
-    const title = appName ? `${appName} - ${pageName}` : pageName
+    const title = pageName
     const description = data?.description || 'Default description for the page.'
 
     return [

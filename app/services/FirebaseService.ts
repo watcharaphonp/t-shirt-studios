@@ -9,6 +9,7 @@ import {
     signInWithEmailAndPassword,
     sendEmailVerification,
     updateProfile,
+    sendPasswordResetEmail,
 } from 'firebase/auth'
 import type { Firestore } from 'firebase/firestore'
 import {
@@ -235,6 +236,17 @@ export class FirebaseService {
             }
         } catch (error) {
             throw new Error('Error sending verification email.')
+        }
+    }
+
+    public static async sendPasswordRecoveryEmail(
+        email: string,
+    ): Promise<void> {
+        this.ensureInitialized()
+        try {
+            await sendPasswordResetEmail(this.firebaseAuth!, email)
+        } catch (error) {
+            throw new Error('Error sending password reset email.')
         }
     }
 
