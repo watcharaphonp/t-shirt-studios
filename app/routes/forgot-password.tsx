@@ -5,6 +5,8 @@ import { json } from '@remix-run/react'
 import ForgotPasswordForm from '~/components/ForgotPasswordForm'
 import { routeConfig } from '~/configs'
 import { useGenerateMeta } from '~/hooks/useGenerateMeta'
+import { FirebaseService } from '~/services/FirebaseService'
+import type { ForgotPasswordFormData } from '~/types/form'
 import { getRequestFormData } from '~/utils/FormUtils'
 
 export function loader() {
@@ -19,10 +21,15 @@ export const meta: MetaFunction = () => {
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-    const formData = await getRequestFormData(request)
-    console.log('Form Data: ', formData)
+    try {
+        const formData: ForgotPasswordFormData =
+            await getRequestFormData(request)
+        await FirebaseService.sendPasswordRecoveryEmail(formData.email)
 
-    return json({ success: true })
+        return json({ success: true })
+    } catch (error) {
+        throw new Error((error as Error).message)
+    }
 }
 
 export default function PasswordRecovery() {
