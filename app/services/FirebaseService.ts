@@ -27,17 +27,18 @@ import {
 
 export class FirebaseService {
     private static firebaseApp: FirebaseApp | null = null
-    private static firebaseAnalytics: Analytics | null = null
     private static firebaseAuth: Auth | null = null
     private static firestore: Firestore | null = null
+    private static firebaseAnalytics: Analytics | null = null
 
     // Initialize Firebase with provided configuration
     public static async initialize(config: FirebaseOptions): Promise<void> {
-        if (!this.firebaseApp) {
-            this.firebaseApp = initializeApp(config)
+        this.firebaseApp = initializeApp(config)
+        this.firebaseAuth = getAuth(this.firebaseApp)
+        this.firestore = getFirestore(this.firebaseApp)
+
+        if (typeof window !== 'undefined') {
             this.firebaseAnalytics = getAnalytics(this.firebaseApp)
-            this.firebaseAuth = getAuth(this.firebaseApp)
-            this.firestore = getFirestore(this.firebaseApp)
         }
     }
 
@@ -235,7 +236,7 @@ export class FirebaseService {
                 throw new Error('No user is currently signed in.')
             }
         } catch (error) {
-            throw new Error('Error sending verification email.')
+            throw new Error((error as Error).message)
         }
     }
 
@@ -246,7 +247,7 @@ export class FirebaseService {
         try {
             await sendPasswordResetEmail(this.firebaseAuth!, email)
         } catch (error) {
-            throw new Error('Error sending password reset email.')
+            throw new Error((error as Error).message)
         }
     }
 

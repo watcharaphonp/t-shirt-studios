@@ -22,6 +22,7 @@ export default function ForgotPasswordForm() {
         // Validate form data with Zod schema
         await ForgotPasswordSchema.parseAsync(values)
             .catch((error) => {
+                console.log(error)
                 const formattedErrors = error.errors.reduce(
                     (acc: Record<string, string>, error: any) => {
                         acc[error.path[0]] = error.message
