@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useFetcher, useNavigate } from '@remix-run/react'
 import { Button, Typography, Box, TextField } from '@mui/material'
-import { useAuth } from '~/contexts/authContext'
 import type { PasswordResetFormData } from '~/types/form'
 import { getFormData } from '~/utils/FormUtils'
 import { PasswordResetSchema } from '~/schemas/password-reset'
@@ -20,7 +19,6 @@ export default function PasswordResetForm({
 }: PasswordResetFormProps) {
     const fetcher = useFetcher() // use fetcher instead of normal form submission
     const navigate = useNavigate() // Initialize useNavigate
-    const { user } = useAuth()
     const [passwordResetError, setPasswordResetError] = useState('')
     const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
     const [isEnablePasswordReset, setIsEnablePasswordReset] = useState(true)
@@ -28,44 +26,44 @@ export default function PasswordResetForm({
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsEnablePasswordReset(false)
+        console.log('working')
 
         // Convert FormData to an object
         const values: PasswordResetFormData = getFormData()
+        console.log(values)
 
-        const result = PasswordResetSchema.safeParse(values)
+        // Validate form data with Zod schema
+        await PasswordResetSchema.parseAsync({ ...values, email })
+            .catch((error) => {
+                const formattedErrors = error.errors.reduce(
+                    (acc: Record<string, string>, error: any) => {
+                        acc[error.path[0]] = error.message
+                        return acc
+                    },
+                    {},
+                )
+                setFormErrors(formattedErrors)
+            })
+            .then(async (result) => {
+                console.log('result', result)
+                if (result !== undefined) {
+                    setFormErrors({})
 
-        if (!result.success) {
-            const formattedErrors = result.error.errors.reduce(
-                (acc, error) => {
-                    acc[error.path[0]] = error.message
-                    return acc
-                },
-                {} as { [key: string]: string },
-            )
-
-            setFormErrors(formattedErrors)
-        } else {
-            setFormErrors({})
-
-            try {
-                await fetcher.submit(result.data, {
-                    method: 'post',
-                    action: `/password-reset?apiKey=${apiKey}&&actionCode=${actionCode}`,
-                })
-                setPasswordResetError('')
-                setIsEnablePasswordReset(true)
-            } catch (error) {
-                setPasswordResetError((error as FirebaseError).message)
-            }
-        }
+                    try {
+                        console.log('result.data', result.data)
+                        await fetcher.submit(result.data, {
+                            method: 'post',
+                            action: `/password-reset?apiKey=${apiKey}&&actionCode=${actionCode}`,
+                        })
+                        console.log('Password reset success')
+                        setPasswordResetError('')
+                        navigate('/login')
+                    } catch (error) {
+                        setPasswordResetError((error as FirebaseError).message)
+                    }
+                }
+            })
     }
-
-    useEffect(() => {
-        if (user !== null) {
-            navigate('/')
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user])
 
     return (
         <Box
@@ -88,6 +86,7 @@ export default function PasswordResetForm({
                 <TextField
                     label="Email"
                     type="email"
+                    name="email"
                     value={email}
                     disabled
                     fullWidth
@@ -100,6 +99,17 @@ export default function PasswordResetForm({
                     label="Password"
                     sx={{ mt: 2 }}
                     placeholder="Enter new password"
+                    shrink
+                    autoComplete="new-password"
+                />
+                <PasswordInput
+                    name="confirmPassword"
+                    required
+                    error={!!formErrors.confirmPassword}
+                    helperText={formErrors.confirmPassword}
+                    label="Confirm password"
+                    sx={{ mt: 2 }}
+                    placeholder="Re-enter your password"
                     shrink
                     autoComplete="new-password"
                 />

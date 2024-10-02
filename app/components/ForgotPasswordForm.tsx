@@ -22,7 +22,6 @@ export default function ForgotPasswordForm() {
         // Validate form data with Zod schema
         await ForgotPasswordSchema.parseAsync(values)
             .catch((error) => {
-                console.log(error)
                 const formattedErrors = error.errors.reduce(
                     (acc: Record<string, string>, error: any) => {
                         acc[error.path[0]] = error.message
@@ -154,7 +153,7 @@ export default function ForgotPasswordForm() {
                     textAlign: 'center',
                     textTransform: 'none',
                     textDecoration: 'none',
-                    '&:hover': { color: 'rgba(255, 255, 255, 0.7)' },
+                    '&:hover': { color: 'rgba(83, 160, 160, 0.7)' },
                 }}
             >
                 I remember the password
