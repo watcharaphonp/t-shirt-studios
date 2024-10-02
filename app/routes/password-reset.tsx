@@ -80,7 +80,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         // Save the new password.
         confirmPasswordReset(auth, actionCode, formData.password)
             .then((resp) => {
-                console.log('confirmPasswordReset', resp)
                 return json({ success: true })
             })
             .catch((error) => {

@@ -50,8 +50,7 @@ export default function PasswordResetForm({
                     setFormErrors({})
 
                     try {
-                        console.log('result.data', result.data)
-                        await fetcher.submit(result.data, {
+                        await fetcher.submit(result, {
                             method: 'post',
                             action: `/password-reset?apiKey=${apiKey}&&actionCode=${actionCode}`,
                         })
