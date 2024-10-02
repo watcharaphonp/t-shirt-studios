@@ -26,11 +26,9 @@ export default function PasswordResetForm({
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsEnablePasswordReset(false)
-        console.log('working')
 
         // Convert FormData to an object
         const values: PasswordResetFormData = getFormData()
-        console.log(values)
 
         // Validate form data with Zod schema
         await PasswordResetSchema.parseAsync({ ...values, email })
@@ -45,7 +43,6 @@ export default function PasswordResetForm({
                 setFormErrors(formattedErrors)
             })
             .then(async (result) => {
-                console.log('result', result)
                 if (result !== undefined) {
                     setFormErrors({})
 
@@ -54,7 +51,6 @@ export default function PasswordResetForm({
                             method: 'post',
                             action: `/password-reset?apiKey=${apiKey}&&actionCode=${actionCode}`,
                         })
-                        console.log('Password reset success')
                         setPasswordResetError('')
                         navigate('/login')
                     } catch (error) {
