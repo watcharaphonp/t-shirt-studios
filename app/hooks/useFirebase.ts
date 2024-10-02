@@ -1,28 +1,24 @@
-// useFirebase.ts
-import type { FirebaseOptions } from 'firebase/app'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FirebaseService } from '~/services/FirebaseService'
+import type { FirebaseOptions } from 'firebase/app'
 
-const useFirebase = (firebaseConfig: FirebaseOptions) => {
-    const [error, setError] = useState<string | null>(null)
+const useFirebase = (config: FirebaseOptions) => {
+    const [isInitialized, setIsInitialized] = useState(false)
 
     useEffect(() => {
         const initializeFirebase = async () => {
             try {
-                await FirebaseService.initialize(firebaseConfig)
-            } catch (initError) {
-                setError(
-                    'Firebase initialization failed: ' +
-                        (initError as Error).message,
-                )
+                await FirebaseService.initialize(config)
+                setIsInitialized(true) // Firebase is initialized
+            } catch (error) {
+                console.error('Firebase initialization failed:', error)
             }
         }
 
         initializeFirebase()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [config])
 
-    return { error }
+    return isInitialized // Return whether Firebase is initialized
 }
 
 export default useFirebase

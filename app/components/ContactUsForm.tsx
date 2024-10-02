@@ -118,6 +118,7 @@ export default function ContactUsForm() {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                InputLabelProps={{ shrink: true }}
                                 placeholder="Enter your first name"
                                 fullWidth
                                 label="First Name"
@@ -129,6 +130,7 @@ export default function ContactUsForm() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                InputLabelProps={{ shrink: true }}
                                 placeholder="Enter your last name"
                                 fullWidth
                                 label="Last Name"
@@ -140,6 +142,7 @@ export default function ContactUsForm() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                InputLabelProps={{ shrink: true }}
                                 placeholder="Enter your company name"
                                 fullWidth
                                 label="Company"
@@ -151,6 +154,7 @@ export default function ContactUsForm() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                InputLabelProps={{ shrink: true }}
                                 placeholder="example@gmail.com"
                                 fullWidth
                                 label="E-mail"

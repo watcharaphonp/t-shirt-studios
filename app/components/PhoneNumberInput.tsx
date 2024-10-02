@@ -129,6 +129,7 @@ const PhoneNumberField = forwardRef(function PhoneNumberField(
                     ))}
                 </Select>
                 <TextField
+                    InputLabelProps={{ shrink: true }}
                     name="phoneNumber"
                     variant="outlined"
                     value={phoneNumber}

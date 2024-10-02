@@ -14,6 +14,7 @@ import { Grid } from '@mui/material'
 import ContactUsForm from '~/components/ContactUsForm'
 import Footer from '~/components/Footer'
 import { routeConfig } from '~/configs'
+import { useAuth } from '~/contexts/authContext'
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
@@ -35,9 +36,11 @@ export default function Index() {
     const handleDrawerClose = () => {
         setIsDrawerOpen(false)
     }
+
+    const { user } = useAuth()
     return (
         <Page>
-            <Header />
+            <Header user={user} />
             <HamburgerButton />
             <DynamicDrawer
                 position={position}

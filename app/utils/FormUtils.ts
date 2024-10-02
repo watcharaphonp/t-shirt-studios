@@ -33,3 +33,11 @@ export const submitForm = (data?: any, action?: string) => {
 
     resetForm()
 }
+
+export const getRequestFormData = async (request: Request) => {
+    if (request.method !== 'POST') {
+        throw new Error('Method not allowed')
+    }
+
+    return Object.fromEntries((await request.formData()).entries())
+}
