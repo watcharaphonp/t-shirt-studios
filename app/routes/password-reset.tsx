@@ -78,15 +78,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             await getRequestFormData(request)
 
         // Save the new password.
-        confirmPasswordReset(auth, actionCode, formData.password)
-            .then((resp) => {
+        await confirmPasswordReset(auth, actionCode, formData.password)
+            .then((success) => {
                 return json({ success: true })
             })
             .catch((error) => {
-                throw new Error((error as Error).message)
+                return json(
+                    { errorMessage: (error as Error).message },
+                    { status: 500 },
+                )
             })
     } catch (error) {
-        throw new Error((error as Error).message)
+        return json({ errorMessage: (error as Error).message }, { status: 500 })
     }
 
     return json({ success: true })
