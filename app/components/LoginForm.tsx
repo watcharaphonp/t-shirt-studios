@@ -41,6 +41,7 @@ const LoginForm = () => {
             )
 
             setFormErrors(formattedErrors)
+            setIsSubmitable(true)
         } else {
             setFormErrors({})
 
@@ -50,6 +51,7 @@ const LoginForm = () => {
                 setIsSubmitable(true)
             } catch (error) {
                 setLoginError((error as FirebaseError).message)
+                setIsSubmitable(true)
             }
         }
     }
