@@ -1,12 +1,11 @@
 import { Grid } from '@mui/material'
 import type { MetaFunction } from '@remix-run/react'
 import { json } from '@remix-run/react'
-import LoginForm from '~/components/LoginForm'
 import { routeConfig } from '~/configs'
 import { useGenerateMeta } from '~/hooks/useGenerateMeta'
 
 export function loader() {
-    return json(routeConfig)
+    return json({ ...routeConfig, pageName: 'Password Reset Confirmation' })
 }
 
 export const meta: MetaFunction = () => {
@@ -16,7 +15,7 @@ export const meta: MetaFunction = () => {
     return metaTags
 }
 
-export default function Login() {
+export default function PasswordResetConfirmation() {
     return (
         <Grid container>
             <Grid
@@ -26,16 +25,24 @@ export default function Login() {
                 lg={7}
                 sx={{
                     '& > div': {
-                        maxWidth: { xs: 'none', md: 'none', lg: '30vw' },
+                        maxWidth: { xs: 'none', md: 'none', lg: '36vw' },
                         padding: {
                             xs: '4vh 16vw',
                             md: '6vh 20vw',
-                            lg: '8vh 4vw',
+                            lg: '0 4vw',
                         },
                     },
                 }}
             >
-                <LoginForm />
+                <h1
+                    style={{
+                        textAlign: 'center',
+                        paddingTop: '50vh',
+                        color: '#17a84a',
+                    }}
+                >
+                    Password reset confirmation sent. Please check your inbox.
+                </h1>
             </Grid>
             <Grid item xs={0} md={0} lg={5}>
                 <div

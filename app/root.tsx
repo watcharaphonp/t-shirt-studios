@@ -15,9 +15,9 @@ import { withEmotionCache } from '@emotion/react'
 import { unstable_useEnhancedEffect as useEnhancedEffect } from '@mui/material'
 import theme from './theme'
 import ClientStyleContext from './ClientStyleContext'
-import { LoaderFunction } from '@remix-run/node'
+import type { LoaderFunction } from '@remix-run/node'
 import { firebaseConfig } from './configs'
-import useFirebase from './hooks/useFirebase'
+import { AuthProvider } from './contexts/authContext'
 
 interface DocumentProps {
     children: React.ReactNode
@@ -98,12 +98,12 @@ const Document = withEmotionCache(
 export default function App() {
     const firebaseConfig = useLoaderData<typeof loader>()
 
-    useFirebase(firebaseConfig)
-
     return (
-        <Document>
-            <Outlet />
-        </Document>
+        <AuthProvider firebaseConfig={firebaseConfig}>
+            <Document>
+                <Outlet />
+            </Document>
+        </AuthProvider>
     )
 }
 

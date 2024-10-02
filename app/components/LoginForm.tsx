@@ -1,108 +1,179 @@
 import {
-    Grid,
     TextField,
     Button,
     Typography,
-    CircularProgress,
+    Box,
+    Link,
+    Divider,
 } from '@mui/material'
-import { Form } from '@remix-run/react'
+import { useNavigate } from '@remix-run/react'
 import type { FirebaseError } from 'firebase/app'
-import { UserCredential } from 'firebase/auth'
-import { useState } from 'react'
-import { FirebaseService } from '~/services/FirebaseService'
+import { useEffect, useState } from 'react'
+import { useAuth } from '~/contexts/authContext'
+import { LoginSchema } from '~/schemas/login'
+import type { LoginFormData } from '~/types/form'
 import { getFormData } from '~/utils/FormUtils'
+import PasswordInput from './PasswordInput'
 
 const LoginForm = () => {
-    const [errorMessage, setErrorMessage] = useState('')
-    const [isFormSubmitable, setIsFormSubmitable] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const navigate = useNavigate() // Initialize useNavigate
+    const { login, user } = useAuth()
+    const [loginError, setLoginError] = useState('')
+    const [isSubmitable, setIsSubmitable] = useState(true)
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
+        setIsSubmitable(false)
         // Convert FormData to an object
-        const values: any = getFormData()
+        const values: LoginFormData = getFormData()
         const { email, password } = values
 
-        try {
-            setIsLoggedIn(false)
-            setIsFormSubmitable(false)
-            setIsLoading(true)
-            const user: UserCredential = await FirebaseService.signIn(
-                email,
-                password,
+        const result = LoginSchema.safeParse(values)
+
+        if (!result.success) {
+            const formattedErrors = result.error.errors.reduce(
+                (acc, error) => {
+                    acc[error.path[0]] = error.message
+                    return acc
+                },
+                {} as { [key: string]: string },
             )
-            console.log(user)
-            setIsFormSubmitable(true)
-            setIsLoading(false)
-            setIsLoggedIn(true)
-            setErrorMessage('')
-        } catch (error) {
-            console.log((error as FirebaseError).code)
-            const errorMessage = FirebaseService.mapFirebaseAuthError(
-                (error as FirebaseError).code,
-            )
-            setErrorMessage(errorMessage)
+
+            setFormErrors(formattedErrors)
+        } else {
+            setFormErrors({})
+
+            try {
+                await login(email, password)
+                setLoginError('')
+                setIsSubmitable(true)
+            } catch (error) {
+                setLoginError((error as FirebaseError).message)
+            }
         }
     }
+
+    useEffect(() => {
+        if (user !== null) {
+            navigate('/')
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user])
+
     return (
-        <div style={{ padding: '20vh 40vw', textAlign: 'center' }}>
-            <div style={{ padding: '20px 40px' }}>
-                <Typography variant="h4">Login</Typography>
-            </div>
-            <Form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Email"
-                            name="email"
-                            required
-                            fullWidth
-                            error={errorMessage !== ''}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Password"
-                            name="password"
-                            type="password"
-                            required
-                            fullWidth
-                            error={errorMessage !== ''}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            disabled={!isFormSubmitable}
-                        >
-                            Login
-                        </Button>
-                    </Grid>
-                    {isLoading && (
-                        <Grid item xs={12}>
-                            <CircularProgress color="inherit" />
-                        </Grid>
-                    )}
-                    {errorMessage && (
-                        <Grid item xs={12}>
-                            <Typography color="error">
-                                {errorMessage}
-                            </Typography>
-                        </Grid>
-                    )}
-                    {isLoggedIn && (
-                        <Grid item xs={12}>
-                            <Typography color="success">
-                                Login successful
-                            </Typography>
-                        </Grid>
-                    )}
-                </Grid>
-            </Form>
-        </div>
+        <Box
+            sx={{
+                mx: 'auto',
+                mt: 4,
+                p: 2,
+                textAlign: 'center',
+            }}
+        >
+            <Box
+                component="form"
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <Typography variant="h4" component="h1" gutterBottom>
+                    Login
+                </Typography>
+                <TextField
+                    label="Email"
+                    name="email"
+                    required
+                    fullWidth
+                    error={!!formErrors.email}
+                    helperText={formErrors.email}
+                    margin="normal"
+                    placeholder="Enter your email"
+                    InputLabelProps={{ shrink: true }}
+                />
+
+                <PasswordInput
+                    name="password"
+                    required
+                    error={!!formErrors.password}
+                    helperText={formErrors.password}
+                    label="Password"
+                    sx={{ mt: 2 }}
+                    placeholder="Enter your password"
+                    shrink
+                    autoComplete="on"
+                />
+                <Link
+                    component={Button}
+                    href="/forgot-password"
+                    variant="caption"
+                    color="primary"
+                    sx={{
+                        float: 'right',
+                        textTransform: 'none',
+                        textDecoration: 'none',
+                    }}
+                >
+                    Forgot Password?
+                </Link>
+                <Button
+                    sx={{ mt: 4, borderRadius: '1px', backgroundColor: '#000' }}
+                    type="submit"
+                    variant="contained"
+                    disabled={!isSubmitable}
+                    fullWidth
+                >
+                    Login
+                </Button>
+                {loginError && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {loginError}
+                    </Typography>
+                )}
+            </Box>
+
+            <Typography
+                variant="caption"
+                display="block"
+                gutterBottom
+                sx={{ mt: 2, textAlign: 'center' }}
+            >
+                Don't have an account?{' '}
+                <Link
+                    component={Button}
+                    href="/signup"
+                    variant="caption"
+                    color="primary"
+                    sx={{ textTransform: 'none', textDecoration: 'none' }}
+                >
+                    Sign Up here
+                </Link>
+            </Typography>
+
+            <Divider
+                orientation="horizontal"
+                variant="middle"
+                flexItem
+                sx={{ mt: 4 }}
+            />
+
+            <Typography
+                variant="caption"
+                display="block"
+                gutterBottom
+                sx={{ mt: 2, textAlign: 'center' }}
+            >
+                Having trouble logging in or need help?{' '}
+                <Link
+                    component={Button}
+                    href="/#contact-us"
+                    variant="caption"
+                    color="primary"
+                    sx={{ textTransform: 'none', textDecoration: 'none' }}
+                >
+                    Contact Us
+                </Link>
+            </Typography>
+        </Box>
     )
 }
 

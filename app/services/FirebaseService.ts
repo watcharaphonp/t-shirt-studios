@@ -2,94 +2,311 @@ import type { FirebaseApp, FirebaseOptions } from 'firebase/app'
 import { initializeApp } from 'firebase/app'
 import type { Analytics } from 'firebase/analytics'
 import { getAnalytics } from 'firebase/analytics'
-import type { Auth } from 'firebase/auth'
+import type { Auth, User, UserCredential } from 'firebase/auth'
 import {
     createUserWithEmailAndPassword,
     getAuth,
     signInWithEmailAndPassword,
     sendEmailVerification,
     updateProfile,
+    sendPasswordResetEmail,
 } from 'firebase/auth'
+import type { Firestore } from 'firebase/firestore'
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    collection,
+    addDoc,
+    query,
+    where,
+    getCountFromServer,
+    getDocs,
+} from 'firebase/firestore'
 
 export class FirebaseService {
     private static firebaseApp: FirebaseApp | null = null
-    private static firebaseAnalytics: Analytics | null = null
     private static firebaseAuth: Auth | null = null
+    private static firestore: Firestore | null = null
+    private static firebaseAnalytics: Analytics | null = null
 
+    // Initialize Firebase with provided configuration
     public static async initialize(config: FirebaseOptions): Promise<void> {
-        if (!this.firebaseApp) {
-            this.firebaseApp = initializeApp(config)
+        this.firebaseApp = initializeApp(config)
+        this.firebaseAuth = getAuth(this.firebaseApp)
+        this.firestore = getFirestore(this.firebaseApp)
 
+        if (typeof window !== 'undefined') {
             this.firebaseAnalytics = getAnalytics(this.firebaseApp)
-            this.firebaseAuth = getAuth(this.firebaseApp)
         }
     }
 
-    private static ensureInitialized(): void {
-        if (!this.firebaseAuth) {
+    // Ensure Firebase services are initialized before using them
+    public static ensureInitialized(): void {
+        if (!this.firebaseAuth || !this.firestore) {
             throw new Error(
-                'Firebase service is not initialized. Please call FirebaseService.initialize() first.',
+                'Firebase is not initialized. Call FirebaseService.initialize() first.',
             )
         }
     }
 
+    // Get Firebase App instance
     public static getFirebaseApp(): FirebaseApp | null {
         return this.firebaseApp
     }
 
+    // Get Firebase Analytics instance
     public static getFirebaseAnalytics(): Analytics | null {
         return this.firebaseAnalytics
     }
 
+    // Get Firebase Auth instance
     public static getFirebaseAuth(): Auth | null {
         return this.firebaseAuth
     }
 
-    public static async signup(email: string, password: string): Promise<any> {
+    // Firestore Methods
+    public static async addDocument(
+        collectionName: string,
+        data: any,
+    ): Promise<string> {
         this.ensureInitialized()
-        return await createUserWithEmailAndPassword(
-            this.firebaseAuth!,
-            email,
-            password,
-        )
+        try {
+            const docRef = await addDoc(
+                collection(this.firestore!, collectionName),
+                data,
+            )
+            return docRef.id
+        } catch (error) {
+            throw new Error(
+                'Error adding document to Firestore: ' +
+                    (error as Error).message,
+            )
+        }
     }
 
-    public static async signIn(email: string, password: string): Promise<any> {
+    public static async setDocument(
+        collectionName: string,
+        docId: string,
+        data: any,
+    ): Promise<void> {
         this.ensureInitialized()
-        return await signInWithEmailAndPassword(
-            this.firebaseAuth!,
-            email,
-            password,
-        )
+        try {
+            await setDoc(doc(this.firestore!, collectionName, docId), data)
+        } catch (error) {
+            throw new Error(
+                'Error setting document in Firestore: ' +
+                    (error as Error).message,
+            )
+        }
     }
 
+    public static async countDocuments(
+        collectionName: string,
+        whereClause: { [key: string]: string },
+    ): Promise<number> {
+        this.ensureInitialized()
+        try {
+            const countSnapshot = await getCountFromServer(
+                query(
+                    collection(this.firestore!, collectionName),
+                    ...Object.keys(whereClause).map((key) =>
+                        where(key, '==', whereClause[key]),
+                    ),
+                ),
+            )
+            return countSnapshot.data().count
+        } catch (error) {
+            throw new Error(
+                'Error fetching documents from Firestore: ' +
+                    (error as Error).message,
+            )
+        }
+    }
+
+    public static async getDocuments(
+        collectionName: string,
+        whereClause: { [key: string]: string } = {},
+    ): Promise<any[]> {
+        this.ensureInitialized()
+        try {
+            const querySnapshot = await getDocs(
+                query(
+                    collection(this.firestore!, collectionName),
+                    ...Object.keys(whereClause).map((key) =>
+                        where(key, '==', whereClause[key]),
+                    ),
+                ),
+            )
+            return querySnapshot.docs.map((doc) => doc.data())
+        } catch (error) {
+            throw new Error(
+                'Error fetching documents from Firestore: ' +
+                    (error as Error).message,
+            )
+        }
+    }
+
+    public static async getDocumentById(
+        collectionName: string,
+        docId: string,
+    ): Promise<any> {
+        this.ensureInitialized()
+        try {
+            const docSnap = await getDoc(
+                doc(this.firestore!, collectionName, docId),
+            )
+            if (docSnap.exists()) {
+                return docSnap.data()
+            } else {
+                throw new Error('No document found.')
+            }
+        } catch (error) {
+            throw new Error(
+                'Error fetching document from Firestore: ' +
+                    (error as Error).message,
+            )
+        }
+    }
+
+    // User Signup with email and password
+    public static async signup(
+        email: string,
+        password: string,
+    ): Promise<UserCredential> {
+        this.ensureInitialized()
+        try {
+            return await createUserWithEmailAndPassword(
+                this.firebaseAuth!,
+                email,
+                password,
+            )
+        } catch (error: any) {
+            throw new Error(this.mapFirebaseAuthError(error.code))
+        }
+    }
+
+    // User Sign-In with email and password
+    public static async signIn(
+        email: string,
+        password: string,
+    ): Promise<UserCredential> {
+        this.ensureInitialized()
+        try {
+            return await signInWithEmailAndPassword(
+                this.firebaseAuth!,
+                email,
+                password,
+            )
+        } catch (error: any) {
+            throw new Error(this.mapFirebaseAuthError(error.code))
+        }
+    }
+
+    // Sign out the current user
     public static async signOut(): Promise<void> {
         this.ensureInitialized()
-        await this.firebaseAuth!.signOut()
+        try {
+            await this.firebaseAuth!.signOut()
+        } catch (error) {
+            throw new Error('Error signing out.')
+        }
     }
 
-    public static async getCurrentUser(): Promise<any> {
+    // Get current user
+    public static async getCurrentUser(): Promise<User | null> {
         this.ensureInitialized()
         return this.firebaseAuth!.currentUser
     }
 
-    public static async isAuthenticated(): Promise<any> {
+    // Check if the user is authenticated
+    public static async isAuthenticated(): Promise<boolean> {
         this.ensureInitialized()
-        return this.firebaseAuth!.currentUser !== null
+        return !!this.firebaseAuth!.currentUser
     }
 
+    // Send a verification email to the current user
+    public static async sendVerificationEmail(): Promise<void> {
+        this.ensureInitialized()
+        try {
+            if (this.firebaseAuth!.currentUser) {
+                await sendEmailVerification(this.firebaseAuth!.currentUser)
+            } else {
+                throw new Error('No user is currently signed in.')
+            }
+        } catch (error) {
+            throw new Error((error as Error).message)
+        }
+    }
+
+    public static async sendPasswordRecoveryEmail(
+        email: string,
+    ): Promise<void> {
+        this.ensureInitialized()
+        try {
+            await sendPasswordResetEmail(this.firebaseAuth!, email)
+        } catch (error) {
+            throw new Error((error as Error).message)
+        }
+    }
+
+    // Update current user's profile information
+    public static async updateUserProfile({
+        displayName = '',
+        photoURL = '',
+    }: {
+        displayName?: string
+        photoURL?: string
+    }): Promise<void> {
+        this.ensureInitialized()
+        try {
+            if (this.firebaseAuth!.currentUser) {
+                await updateProfile(this.firebaseAuth!.currentUser, {
+                    displayName,
+                    photoURL,
+                })
+            } else {
+                throw new Error('No user is currently signed in.')
+            }
+        } catch (error) {
+            throw new Error('Error updating profile.')
+        }
+    }
+
+    // Map Firebase Auth errors to custom messages
     public static mapFirebaseAuthError(errorCode: string): string {
         switch (errorCode) {
             case 'auth/invalid-credential':
-                return 'The email address or password is incorrect.'
+                return 'The email address or password is incorrect. Please check again.'
             case 'auth/email-already-in-use':
                 return 'The email is already registered with another account.'
+            case 'auth/weak-password':
+                return 'The password is too weak.'
+            case 'auth/user-not-found':
+                return 'No account found with this email.'
+            case 'auth/wrong-password':
+                return 'Incorrect password.'
             default:
                 return 'An unknown error occurred. Please try again.'
         }
     }
 
+    // Get Firebase configuration from environment variables
     public static getFirebaseConfig(): FirebaseOptions {
+        if (
+            !process.env.PUBLIC_FIREBASE_API_KEY ||
+            !process.env.PUBLIC_FIREBASE_AUTH_DOMAIN ||
+            !process.env.PUBLIC_FIREBASE_PROJECT_ID ||
+            !process.env.PUBLIC_FIREBASE_STORAGE_BUCKET ||
+            !process.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID ||
+            !process.env.PUBLIC_FIREBASE_APP_ID
+        ) {
+            throw new Error(
+                'Firebase configuration is missing. Check your .env file.',
+            )
+        }
+
         return {
             apiKey: process.env.PUBLIC_FIREBASE_API_KEY!,
             authDomain: process.env.PUBLIC_FIREBASE_AUTH_DOMAIN!,
@@ -99,24 +316,5 @@ export class FirebaseService {
             appId: process.env.PUBLIC_FIREBASE_APP_ID!,
             measurementId: process.env.PUBLIC_FIREBASE_MEASUREMENT_ID!,
         }
-    }
-
-    public static async sendVerificationEmail(): Promise<void> {
-        this.ensureInitialized()
-        await sendEmailVerification(this.firebaseAuth!.currentUser!)
-    }
-
-    public static async updateUserProfile({
-        displayName = '',
-        photoURL = '',
-    }: {
-        displayName?: string
-        photoURL?: string
-    }): Promise<void> {
-        this.ensureInitialized()
-        await updateProfile(this.firebaseAuth!.currentUser!, {
-            displayName,
-            photoURL,
-        })
     }
 }
