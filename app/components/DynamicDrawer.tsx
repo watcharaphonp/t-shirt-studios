@@ -77,11 +77,13 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                         variant="h5"
                         sx={{
                             marginBottom: 2,
-                            textTransform: 'uppercase',
+                            textTransform: !user ? 'uppercase' : 'none',
                             paddingTop: '8px',
                         }}
                     >
-                        This is your studio
+                        {user
+                            ? `Welcome, ${user?.displayName}`
+                            : 'This is your studio'}
                     </Typography>
                 </Grid>
                 <Grid item xs={2}>

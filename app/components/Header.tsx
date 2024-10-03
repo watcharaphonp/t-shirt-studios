@@ -1,5 +1,6 @@
 import { AppBar, Toolbar, Typography, Box, Button } from '@mui/material'
-import { json, useLoaderData } from '@remix-run/react'
+import { json, useLoaderData, useLocation } from '@remix-run/react'
+import { useEffect } from 'react'
 import { useAuth } from '~/contexts/authContext'
 
 export function loader() {
@@ -7,14 +8,24 @@ export function loader() {
 }
 
 function TopHeader() {
+    const location = useLocation()
     const { user, isLoading, logout } = useAuth()
-    const logoUrl = '/assets/icons/app-logo2.png'
+    const logoUrl = '/assets/icons/app-logo.svg'
     const data = useLoaderData<typeof loader>()
     const buttonStyles = {
         color: '#fff',
         fontSize: '28px',
         textTransform: 'none',
     }
+
+    useEffect(() => {
+        if (window.location.hash) {
+            const urlWithoutHash = window.location.href.split('#')[0]
+
+            // Use history.replaceState to update the URL without refreshing the page
+            window.history.replaceState(null, '', urlWithoutHash)
+        }
+    }, [location])
 
     return (
         <AppBar
@@ -34,8 +45,7 @@ function TopHeader() {
                     alt="Logo"
                     style={{
                         color: '#fff',
-                        height: '50px',
-                        marginRight: '16px',
+                        height: '70px',
                     }}
                 />
                 <Typography
@@ -67,7 +77,7 @@ function TopHeader() {
                                 className="header-bar-btn"
                                 sx={{
                                     ...buttonStyles,
-                                    marginRight: '8vw !important',
+                                    marginRight: '4vw !important',
                                 }}
                                 onClick={() => logout()} // Call sign out on click
                             >
