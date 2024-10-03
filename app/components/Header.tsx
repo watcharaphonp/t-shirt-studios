@@ -77,7 +77,7 @@ function TopHeader() {
                                 className="header-bar-btn"
                                 sx={{
                                     ...buttonStyles,
-                                    marginRight: '4vw !important',
+                                    marginRight: '6vw !important',
                                 }}
                                 onClick={() => logout()} // Call sign out on click
                             >
