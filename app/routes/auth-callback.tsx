@@ -45,15 +45,20 @@ export async function loader({ request }: ActionFunctionArgs) {
 
     switch (mode) {
         case AuthMode.VERIFY_EMAIL:
-            applyActionCode(auth, oobCode)
-                .then((resp) => {
-                    // Email address has been verified.
-                    return redirect('/verification-success')
-                })
-                .catch((error) => {
-                    throw new Error('Email verification failed.')
-                })
-            break
+            try {
+                await applyActionCode(auth, oobCode)
+                return redirect('/verification-success')
+            } catch (error) {
+                console.log('verification failed')
+                return json(
+                    {
+                        errorMessage: 'Email verification failed.',
+                    },
+                    {
+                        status: 500,
+                    },
+                )
+            }
         case AuthMode.RESET_PASSWORD:
             try {
                 const email = await verifyPasswordResetCode(auth, oobCode ?? '')
@@ -62,11 +67,15 @@ export async function loader({ request }: ActionFunctionArgs) {
                     return redirect(`/password-reset${searchParamsString}`)
                 }
             } catch (error) {
-                throw new Error(
-                    `Error from validation: ${(error as Error).message}`,
+                return json(
+                    {
+                        errorMessage: `Error from validation: ${(error as Error).message}`,
+                    },
+                    {
+                        status: 500,
+                    },
                 )
             }
-            break
         case AuthMode.RECOVER_EMAIL:
             try {
                 let restoredEmail: string | null | undefined = null
@@ -84,19 +93,36 @@ export async function loader({ request }: ActionFunctionArgs) {
                                 return redirect('/password-reset-confirmation')
                             })
                             .catch((error) => {
-                                throw new Error(
-                                    'Error encountered while sending password reset code.',
+                                return json(
+                                    {
+                                        errorMessage:
+                                            'Error encountered while sending password reset code.',
+                                    },
+                                    {
+                                        status: 500,
+                                    },
                                 )
                             })
                     })
                     .catch((error) => {
-                        throw new Error('Invalid or expired code.')
+                        return json(
+                            {
+                                errorMessage: 'Invalid or expired code.',
+                            },
+                            {
+                                status: 500,
+                            },
+                        )
                     })
             } catch (error) {
-                return json({
-                    pageName: 'Error',
-                    errorMessage: (error as Error).message,
-                })
+                return json(
+                    {
+                        errorMessage: (error as Error).message,
+                    },
+                    {
+                        status: 500,
+                    },
+                )
             }
             break
         default:
@@ -104,8 +130,7 @@ export async function loader({ request }: ActionFunctionArgs) {
     }
 
     return json({
-        pageName: 'Error',
-        errorMessage: 'Unexpected error occurred.',
+        status: 'success',
     })
 }
 
