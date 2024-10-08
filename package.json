@@ -10,6 +10,8 @@
         "prettier": "npx prettier . --write"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.665.0",
+        "@aws-sdk/s3-request-presigner": "^3.665.0",
         "@emotion/cache": "latest",
         "@emotion/react": "^11.13.3",
         "@emotion/server": "latest",
@@ -26,7 +28,9 @@
         "@types/google-libphonenumber": "^7.4.30",
         "@typescript-eslint/eslint-plugin": "^8.5.0",
         "@typescript-eslint/parser": "^8.5.0",
+        "axios": "^1.7.7",
         "countries-list": "^3.1.1",
+        "country-region-data": "^3.0.0",
         "dotenv": "^16.4.5",
         "eslint": "^8.57.0",
         "firebase": "^10.13.2",

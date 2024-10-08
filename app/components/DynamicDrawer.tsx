@@ -11,6 +11,7 @@ import {
     Typography,
 } from '@mui/material'
 import { useAuth } from '~/contexts/authContext'
+import { useNavigate } from '@remix-run/react'
 
 interface DynamicDrawerProps {
     position: Anchor
@@ -23,6 +24,7 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
     isDrawerOpen = false,
     onClose,
 }) => {
+    const navigate = useNavigate()
     const { user, logout } = useAuth()
     const [drawerPositionOpenState, setDrawerPositionOpenState] =
         useState<DrawerOpenState>({
@@ -112,6 +114,12 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                             onClick={() => scrollToSection('contact-us')}
                         >
                             <div className="menu-list-item">Contact Us</div>
+                        </ListItemButton>
+                        <ListItemButton
+                            component="a"
+                            onClick={() => navigate('/dashboard')}
+                        >
+                            <div className="menu-list-item">Your Dashboard</div>
                         </ListItemButton>
                     </List>
                 </Grid>

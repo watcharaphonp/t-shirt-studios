@@ -11,3 +11,11 @@ export const firebaseConfig = {
     appId: process.env.FIREBASE_APP_ID,
     measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 }
+
+export const awsConfig = {
+    region: process.env.AWS_REGION ?? 'us-east-1',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? 'test',
+    secretAccessKey: process.env.AWS_ACCESS_KEY_ID ?? 'test',
+    endpoint: process.env.AWS_ENDPOINT_URL ?? 'http://localhost:4566',
+    bucketName: process.env.AWS_BUCKET_NAME ?? 'tshirt-creator',
+}
