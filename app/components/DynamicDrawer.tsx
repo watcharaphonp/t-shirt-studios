@@ -115,12 +115,16 @@ const DynamicDrawer: FC<DynamicDrawerProps> = ({
                         >
                             <div className="menu-list-item">Contact Us</div>
                         </ListItemButton>
-                        <ListItemButton
-                            component="a"
-                            onClick={() => navigate('/dashboard')}
-                        >
-                            <div className="menu-list-item">Your Dashboard</div>
-                        </ListItemButton>
+                        {user !== null && (
+                            <ListItemButton
+                                component="a"
+                                onClick={() => navigate('/dashboard')}
+                            >
+                                <div className="menu-list-item">
+                                    Your Dashboard
+                                </div>
+                            </ListItemButton>
+                        )}
                     </List>
                 </Grid>
             </Grid>
