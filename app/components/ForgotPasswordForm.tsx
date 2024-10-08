@@ -107,7 +107,13 @@ export default function ForgotPasswordForm() {
                     placeholder="Enter email address"
                 />
                 {isEnableResendEmail && (
-                    <Typography sx={{ textAlign: 'right', fontSize: '12px' }}>
+                    <Typography
+                        sx={{
+                            textAlign: 'right',
+                            fontSize: '12px',
+                            color: '#686868',
+                        }}
+                    >
                         Didn't receive an email?{' '}
                         <Link
                             component={Button}

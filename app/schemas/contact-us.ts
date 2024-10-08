@@ -40,7 +40,7 @@ const ContactUsFormSchema: z.ZodType = z
             .email('email must be a valid email'),
         phoneNumber: z.string(),
         phonePrefix: z.string().min(1, 'Phone Prefix is required'),
-        countryCode: z.string().min(1, 'Country Code is required'),
+        phoneCountryCode: z.string().min(1, 'Country Code is required'),
         agreeToPolicy: z
             .string()
             .refine((value) => value === 'on', {

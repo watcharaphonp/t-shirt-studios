@@ -79,8 +79,6 @@
 }
 
 body {
-    background-color: #000 !important;
-    color: #fff !important;
     font-family: 'Borna', sans-serif !important;
     font-weight: 400;
     margin: 0;
@@ -181,6 +179,7 @@ img.contact-us-cover {
     position: relative;
     line-height: 1.2;
     font-weight: 500;
+    color: #fff;
 }
 
 .carousel-btn {
@@ -245,4 +244,20 @@ img.contact-us-cover {
     font-weight: 500 !important;
     font-size: 24px !important;
     color: #000 !important;
+}
+
+.expandable-card-item {
+    margin-bottom: 12px !important;
+    border-radius: 4px !important;
+    background-color: #faf9f9 !important;
+    border-radius: 2px !important;
+}
+
+div:has(> .custom-label-shrink) {
+    background-color: inherit !important;
+}
+
+.custom-label-shrink {
+    background-color: inherit;
+    padding: 0 4px !important;
 }

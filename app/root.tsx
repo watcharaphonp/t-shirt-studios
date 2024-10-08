@@ -18,6 +18,9 @@ import ClientStyleContext from './ClientStyleContext'
 import type { LoaderFunction } from '@remix-run/node'
 import { firebaseConfig } from './configs'
 import { AuthProvider } from './contexts/authContext'
+import styles from './main.css'
+
+export const links = () => [{ rel: 'stylesheet', href: styles }]
 
 interface DocumentProps {
     children: React.ReactNode

@@ -1,8 +1,7 @@
 import * as React from 'react'
-import type { MetaFunction, LinksFunction } from '@remix-run/node'
+import type { MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/react'
 
-import styles from '../main.css'
 import DynamicDrawer from '../components/DynamicDrawer'
 import type { Anchor } from '../types/drawer'
 import { useGenerateMeta } from '~/hooks/useGenerateMeta'
@@ -14,9 +13,6 @@ import { Grid } from '@mui/material'
 import ContactUsForm from '~/components/ContactUsForm'
 import Footer from '~/components/Footer'
 import { routeConfig } from '~/configs'
-import { useAuth } from '~/contexts/authContext'
-
-export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
 export function loader() {
     return json(routeConfig)
@@ -37,10 +33,9 @@ export default function Index() {
         setIsDrawerOpen(false)
     }
 
-    const { user } = useAuth()
     return (
         <Page>
-            <Header user={user} />
+            <Header />
             <HamburgerButton />
             <DynamicDrawer
                 position={position}

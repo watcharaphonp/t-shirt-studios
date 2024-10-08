@@ -6,7 +6,7 @@ const phoneUtil = PhoneNumberUtil.getInstance()
 const phoneNumberLimit: number = 15
 
 const validatePhoneNumber = (data: ContactUsFormData, ctx: z.RefinementCtx) => {
-    const { phonePrefix, countryCode, phoneNumber = '' } = data
+    const { phonePrefix, phoneCountryCode, phoneNumber = '' } = data
     let isValid = false
 
     if (phoneNumber.length === 0)
@@ -33,11 +33,11 @@ const validatePhoneNumber = (data: ContactUsFormData, ctx: z.RefinementCtx) => {
     try {
         const parsedPhoneNumber = phoneUtil.parseAndKeepRawInput(
             phoneNumber,
-            countryCode,
+            phoneCountryCode,
         )
         isValid = phoneUtil.isValidNumberForRegion(
             parsedPhoneNumber,
-            countryCode,
+            phoneCountryCode,
         )
     } catch (e) {
         // Catch potential parsing errors

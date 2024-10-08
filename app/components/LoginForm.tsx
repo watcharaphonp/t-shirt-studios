@@ -137,7 +137,7 @@ const LoginForm = () => {
                 variant="caption"
                 display="block"
                 gutterBottom
-                sx={{ mt: 2, textAlign: 'center' }}
+                sx={{ mt: 2, textAlign: 'center', color: '#686868' }}
             >
                 Don't have an account?{' '}
                 <Link
@@ -162,7 +162,7 @@ const LoginForm = () => {
                 variant="caption"
                 display="block"
                 gutterBottom
-                sx={{ mt: 2, textAlign: 'center' }}
+                sx={{ mt: 2, textAlign: 'center', color: '#686868' }}
             >
                 Having trouble logging in or need help?{' '}
                 <Link
